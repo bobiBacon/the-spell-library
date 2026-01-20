@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.bobbacon.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ItemRendererAccessor",
+    "ItemRendererMixin",
+    "ItemStackMixin",
+    "ModelLoaderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
