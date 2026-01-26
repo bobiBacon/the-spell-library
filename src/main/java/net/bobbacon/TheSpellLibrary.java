@@ -1,5 +1,7 @@
 package net.bobbacon;
 
+import net.bobbacon.block.ModBlocks;
+import net.bobbacon.block.entity.ModBEs;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.ritual.RitualManager;
 import net.bobbacon.spell.SpellType;
@@ -27,5 +29,7 @@ public class TheSpellLibrary implements ModInitializer {
 		SpellType.init();
 		ModItems.init();
 		RitualManager.init();
+		ModBlocks.init();
+		ModBEs.init();
 	}
 }

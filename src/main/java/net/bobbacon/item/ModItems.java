@@ -2,6 +2,7 @@ package net.bobbacon.item;
 
 import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.api.RegistryHelper;
+import net.bobbacon.block.ModBlocks;
 import net.bobbacon.spell.SpellRegistry;
 import net.bobbacon.spell.SpellType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -15,6 +16,7 @@ import net.minecraft.registry.Registries;
 public class ModItems {
     private static final RegistryHelper<Item> registryHelper=new RegistryHelper<>(Registries.ITEM, TheSpellLibrary.MOD_ID);
     public static final Item SCROLL = registryHelper.register("scroll", new ScrollItem(new Item.Settings()));
+    public static final Item DECRYPTOR = registryHelper.register("decryptor", new BlockItem(ModBlocks.DECRYPTOR, new Item.Settings()));
 
 
     public static void init(){
