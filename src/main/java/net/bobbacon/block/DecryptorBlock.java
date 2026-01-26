@@ -10,6 +10,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 public class DecryptorBlock extends BlockWithEntity {
+    public static final BooleanProperty DECRYPTED = BooleanProperty.of("decrypted");
     private static final VoxelShape BASE_SHAPE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 1.0, 15.0);
     private static final VoxelShape STEP_SHAPE = Block.createCuboidShape(2.0, 1.0, 2.0, 14.0, 2.0, 14.0);
     private static final VoxelShape STEM_SHAPE = Block.createCuboidShape(3.0, 2.0, 3.0, 13.0, 13.0, 13.0);
@@ -69,11 +71,11 @@ public class DecryptorBlock extends BlockWithEntity {
     }
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING);
+        builder.add(Properties.HORIZONTAL_FACING,DECRYPTED);
     }
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite()).with(DECRYPTED,false);
     }
 
 }

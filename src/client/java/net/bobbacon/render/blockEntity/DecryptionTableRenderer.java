@@ -40,7 +40,9 @@ public class DecryptionTableRenderer {
             int light,
             int overlay
     ){
+
         for (DecryptionTableParticleRenderer particleRenderer: particles){
+
             if (!entity.isIdle()){
                 particleRenderer.turningTick(entity.endAnimationProgress());
             }

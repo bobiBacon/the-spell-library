@@ -1,16 +1,20 @@
 package net.bobbacon.block.entity;
 
+import net.bobbacon.block.DecryptorBlock;
 import net.bobbacon.item.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
@@ -22,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 public class Decryptor extends BlockEntity {
+
+
     protected DefaultedList<ItemStack> items= DefaultedList.ofSize(1,ItemStack.EMPTY);
     public float endProgress=0;
     public static final String STATE_KEY ="current_state";
@@ -42,10 +48,17 @@ public class Decryptor extends BlockEntity {
         if (decryptor.isInEndAnimation()){
             decryptor.endProgress+=0.01f;
             if (decryptor.endProgress>=1){
-                decryptor.state=State.IDLE_DECRYPTED;
+                decryptor.setState(State.IDLE_DECRYPTED,state);
                 decryptor.markDirtyAndSync();
             }
         }
+    }
+    public void setState(State state, BlockState blockState){
+        this.state= state;
+        setBlockStateDecrypted(state==State.IDLE_DECRYPTED,blockState);
+    }
+    public void setBlockStateDecrypted(boolean value, BlockState state){
+        world.setBlockState(pos, state.with(DecryptorBlock.DECRYPTED, value), Block.NOTIFY_ALL);
     }
 
     public ItemStack getStack() {
@@ -56,13 +69,13 @@ public class Decryptor extends BlockEntity {
         super.readNbt(nbt);
         Inventories.readNbt(nbt,items);
         int stateInt= nbt.getInt(STATE_KEY);
-        state= switch (stateInt){
+        setState( switch (stateInt){
             case 0 ->State.IDLE;
             case 1 ->State.IDLE_DECRYPTED;
             case 2 ->State.DECRYPTING;
             case 3 ->State.TRANSITION;
             default -> throw new IllegalStateException("Unexpected value: " + stateInt);
-        };
+        },world.getBlockState(pos));
     }
 
     @Override
@@ -71,6 +84,7 @@ public class Decryptor extends BlockEntity {
         Inventories.writeNbt(nbt, this.items, true);
         nbt.putInt(STATE_KEY,state.toInt());
     }
+
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack playerStack= player.getStackInHand(hand);
@@ -84,7 +98,7 @@ public class Decryptor extends BlockEntity {
             player.giveItemStack(stack);
             stack.decrement(1);
             setStack(stack);
-            this.state= State.IDLE;
+            setState(State.IDLE,state);
             markDirtyAndSync();
             return ActionResult.SUCCESS;
         }
@@ -97,14 +111,15 @@ public class Decryptor extends BlockEntity {
         boolean isDecrypting=items.get(0).isOf(ModItems.SCROLL);
 
         if (isDecrypting){
-            state= State.DECRYPTING;
+            setState(State.DECRYPTING,world.getBlockState(pos));
             endProgress=0f;
             markDirtyAndSync();
         }
         return isDecrypting;
     }
     public void decrypt(){
-        state= State.TRANSITION;
+        setState(State.TRANSITION,world.getBlockState(pos));
+
 
         markDirtyAndSync();
     }
@@ -137,6 +152,9 @@ public class Decryptor extends BlockEntity {
 
     public boolean isIdle() {
         return state==State.IDLE||state==State.IDLE_DECRYPTED;
+    }
+    public boolean isDecrypted(){
+        return state==State.IDLE_DECRYPTED;
     }
 
     public enum State{

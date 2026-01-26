@@ -76,29 +76,32 @@ public class DecryptionTableParticleRenderer {
             VertexConsumerProvider vertexConsumers,
             int light
     ){
+        if (entity.isIdle()){
+            return;
+        }
         MinecraftClient client = MinecraftClient.getInstance();
         Sprite sprite = client.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
                 .apply(Identifier.of(TheSpellLibraryClient.MOD_ID,"block/decryption_tablet"));
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
-                RenderLayer.getEntityCutoutNoCull(sprite.getAtlasId())
+                RenderLayer.getEntityTranslucent(sprite.getAtlasId())
         );
 
         matrices.push();
         int angle2= 90+angle;
 
         float progress= entity.endAnimationProgress();
-        float coefficient= (float) Math.pow(100,2.9*(progress-1));
+        float coefficient= 0.4f/(progress+0.3f)-0.3f;
         if (progress>=0.5){
             if (angle<=180){
-                angle2= (int) (angle2*(1f-coefficient));
+                angle2= (int) (angle2*coefficient);
             }else {
-                angle2= (int) (360-angle2*(1f-coefficient));
+                angle2= (int) (360-angle2*coefficient);
             }
         }
-        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(22.5f*coefficient),0,1.5f,0);
+        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(22.5f*(1f-coefficient)),0,1.5f,0);
         matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(angle2),x,y,z);
-        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(90*coefficient),x,y,z);
+        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(90*(1f-coefficient)),x,y,z);
         matrices.translate(x,y,z);
         matrices.scale(0.125f,0.125f,0.125f);
 
@@ -155,7 +158,7 @@ public class DecryptionTableParticleRenderer {
         float maxV= minV+du;
 
         consumer.vertex(matrix, -0.5f, -0.25f,0)
-                .color(255, 255, 255, 255)
+                .color(255, 255, 255, 150)
                 .texture(minU, maxV)
                 .overlay(overlay)
                 .light(light)
@@ -163,7 +166,7 @@ public class DecryptionTableParticleRenderer {
                 .next();
 
         consumer.vertex(matrix, 0.5f, -0.25f,0 )
-                .color(255, 255, 255, 255)
+                .color(255, 255, 255, 150)
                 .texture(maxU, maxV)
                 .overlay(overlay)
                 .light(light)
@@ -171,7 +174,7 @@ public class DecryptionTableParticleRenderer {
                 .next();
 
         consumer.vertex(matrix, 0.5f, 0.25f,0)
-                .color(255, 255, 255, 255)
+                .color(255, 255, 255, 150)
                 .texture(maxU, minV)
                 .overlay(overlay)
                 .light(light)
@@ -179,7 +182,7 @@ public class DecryptionTableParticleRenderer {
                 .next();
 
         consumer.vertex(matrix, -0.5f, 0.25f,0)
-                .color(255, 255, 255, 255)
+                .color(255, 255, 255, 150)
                 .texture(minU, minV)
                 .overlay(overlay)
                 .light(light)

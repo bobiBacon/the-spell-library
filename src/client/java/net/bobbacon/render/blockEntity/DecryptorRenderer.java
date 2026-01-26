@@ -58,7 +58,7 @@ public class DecryptorRenderer implements BlockEntityRenderer<Decryptor> {
             float progress= entity.endAnimationProgress();
             float coefficient= 0.4f/(progress+0.3f)-0.3f;
             matrices.translate(0,-0.425f*(1f-coefficient),0);
-            angle2= 360-(int) (angle*(coefficient));
+            angle2= (int) (angle*(coefficient));
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(67.5f-67.5f*coefficient));
 
         }else if (entity.isDecrypting()){

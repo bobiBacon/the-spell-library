@@ -30,5 +30,6 @@ public class TheSpellLibraryClient implements ClientModInitializer {
 //				tooltip.add(0,Text.translatable("item.night-of-the-dead.scroll.spell.unknown"));
             }
         });
+
 	}
 }
