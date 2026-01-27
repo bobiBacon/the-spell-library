@@ -1,6 +1,5 @@
 package net.bobbacon.render.blockEntity;
 
-import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.TheSpellLibraryClient;
 import net.bobbacon.block.entity.Decryptor;
 import net.minecraft.client.MinecraftClient;
@@ -27,15 +26,21 @@ public class DecryptionTableParticleRenderer {
     public final Vec3d origin;
     public final Vec2f posOnTable;
     public final float speed;
+    public final float sizeX;
+    public final float sizeY;
 
 
-    public DecryptionTableParticleRenderer(float y, int angle, Vec2f origin, float speed) {
+    public DecryptionTableParticleRenderer(float y, int angle, Vec2f origin, float speed, float sizeX, float sizeY) {
         this.y = y;
+        this.x=origin.x;
+        this.z=origin.y;
         this.originalY= y;
         this.angle= angle;
         this.origin = new Vec3d(origin.x*0.0625+0.1875,0.80, origin.y*0.0625-0.2f);
         this.speed=speed;
         posOnTable= origin;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
     }
     public void turningTick(float endProgress){
 
@@ -69,29 +74,63 @@ public class DecryptionTableParticleRenderer {
         z= (float) pos2.z;
 
     }
-    public void render(
+    public void renderSecond(
             Decryptor entity,
             float tickDelta,
             MatrixStack matrices,
             VertexConsumerProvider vertexConsumers,
             int light
     ){
-        if (entity.isIdle()){
-            return;
-        }
         MinecraftClient client = MinecraftClient.getInstance();
         Sprite sprite = client.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
                 .apply(Identifier.of(TheSpellLibraryClient.MOD_ID,"block/decryption_tablet"));
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
-                RenderLayer.getEntityTranslucent(sprite.getAtlasId())
+                RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
+
+        );
+        VertexConsumer consumer1 = vertexConsumers.getBuffer(
+                RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
+
+        );
+
+        matrices.push();
+
+        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(22.5f),0,1.5f,0);
+        matrices.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(90),x,y,z);
+        matrices.translate(x-0.03125,y,z);
+        matrices.scale(0.125f,0.125f,0.125f);
+
+
+        light=255;
+
+        render(entity,matrices,sprite,consumer,consumer1,light);
+
+        matrices.pop();
+    }
+    public void renderMain(
+            Decryptor entity,
+            float tickDelta,
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            int light
+    ){
+        MinecraftClient client = MinecraftClient.getInstance();
+        Sprite sprite = client.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
+                .apply(Identifier.of(TheSpellLibraryClient.MOD_ID,"block/decryption_tablet"));
+
+        VertexConsumer consumer = vertexConsumers.getBuffer(
+                RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
+        );
+        VertexConsumer consumer1 = vertexConsumers.getBuffer(
+                RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
         );
 
         matrices.push();
         int angle2= 90+angle;
 
         float progress= entity.endAnimationProgress();
-        float coefficient= 0.4f/(progress+0.3f)-0.3f;
+        float coefficient= 0.4f/(progress+0.306226f)-0.306226f;
         if (progress>=0.5){
             if (angle<=180){
                 angle2= (int) (angle2*coefficient);
@@ -105,14 +144,27 @@ public class DecryptionTableParticleRenderer {
         matrices.translate(x,y,z);
         matrices.scale(0.125f,0.125f,0.125f);
 
-//        matrices.scale(0.125f,0.0625f,0.125f);
-//        matrices.translate(0.5,0.5,0.5);
+
+        light=255;
+
+        render(entity,matrices,sprite,consumer,consumer1,light);
+
+        matrices.pop();
+    }
+    public void render(
+            Decryptor entity,
+            MatrixStack matrices,
+            Sprite sprite,
+            VertexConsumer consumer,
+            VertexConsumer consumer1,
+            int light
+    ){
+
         MatrixStack.Entry entry = matrices.peek();
         Matrix4f matrix = entry.getPositionMatrix();
         Matrix3f normal = entry.getNormalMatrix();
 
         int overlay = OverlayTexture.DEFAULT_UV;
-        light=255;
         float u0 = sprite.getMinU();
         float u1 = sprite.getMaxU();
         float v0 = sprite.getMinV();
@@ -121,43 +173,12 @@ public class DecryptionTableParticleRenderer {
         float du = (u1 - u0) / 16f;
         float dv = (v1 - v0) / 16f;
 
-//        consumer.vertex(matrix, -0.5f, -0.5f,0)
-//                .color(255, 255, 255, 255)
-//                .texture(sprite.getMinU(), sprite.getMaxV())
-//                .overlay(overlay)
-//                .light(light)
-//                .normal(normal, 0, 0, 1)
-//                .next();
-//
-//        consumer.vertex(matrix, 0.5f, -0.5f,0 )
-//                .color(255, 255, 255, 255)
-//                .texture(sprite.getMaxU(), sprite.getMaxV())
-//                .overlay(overlay)
-//                .light(light)
-//                .normal(normal, 0, 0, 1)
-//                .next();
-//
-//        consumer.vertex(matrix, 0.5f, 0.5f,0)
-//                .color(255, 255, 255, 255)
-//                .texture(sprite.getMaxU(), sprite.getMinV())
-//                .overlay(overlay)
-//                .light(light)
-//                .normal(normal, 0, 0, 1)
-//                .next();
-//
-//        consumer.vertex(matrix, -0.5f, 0.5f,0)
-//                .color(255, 255, 255, 255)
-//                .texture(sprite.getMinU(), sprite.getMinV())
-//                .overlay(overlay)
-//                .light(light)
-//                .normal(normal, 0, 0, 1)
-//                .next();
-        float minU= sprite.getMinU()+du* posOnTable.x;
-        float maxU= minU+du*2;
-        float minV= sprite.getMinV()+du* posOnTable.y;
-        float maxV= minV+du;
 
-        consumer.vertex(matrix, -0.5f, -0.25f,0)
+        float minU= sprite.getMinU()+du* posOnTable.x;
+        float maxU= minU+du*sizeX;
+        float minV= sprite.getMinV()+dv* posOnTable.y;
+        float maxV= minV+dv*sizeY;
+        consumer.vertex(matrix, -0.25f*sizeX, -0.25f*sizeY,0)
                 .color(255, 255, 255, 150)
                 .texture(minU, maxV)
                 .overlay(overlay)
@@ -165,7 +186,7 @@ public class DecryptionTableParticleRenderer {
                 .normal(normal, 0, 0, 1)
                 .next();
 
-        consumer.vertex(matrix, 0.5f, -0.25f,0 )
+        consumer.vertex(matrix, 0.25f*sizeX, -0.25f*sizeY,0 )
                 .color(255, 255, 255, 150)
                 .texture(maxU, maxV)
                 .overlay(overlay)
@@ -173,7 +194,7 @@ public class DecryptionTableParticleRenderer {
                 .normal(normal, 0, 0, 1)
                 .next();
 
-        consumer.vertex(matrix, 0.5f, 0.25f,0)
+        consumer.vertex(matrix, 0.25f*sizeX, 0.25f*sizeY,0)
                 .color(255, 255, 255, 150)
                 .texture(maxU, minV)
                 .overlay(overlay)
@@ -181,14 +202,48 @@ public class DecryptionTableParticleRenderer {
                 .normal(normal, 0, 0, 1)
                 .next();
 
-        consumer.vertex(matrix, -0.5f, 0.25f,0)
+        consumer.vertex(matrix, -0.25f*sizeX, 0.25f*sizeY,0)
                 .color(255, 255, 255, 150)
                 .texture(minU, minV)
                 .overlay(overlay)
                 .light(light)
                 .normal(normal, 0, 0, 1)
                 .next();
+        //je pourais tricher un peu en changeant le rendu quand je suis en tablette et en particules
+        // BACK (ordre inversé)
+        consumer.vertex(matrix, -0.25f*sizeX, 0.25f*sizeY, 0)
+                .color(255,255,255,150)
+                .texture(minU, minV)
+                .overlay(overlay)
+                .light(light)
+                .normal(normal, 0, 0, -1)
+                .next();
 
-        matrices.pop();
+        consumer.vertex(matrix, 0.25f*sizeX, 0.25f*sizeY, 0)
+                .color(255,255,255,150)
+                .texture(maxU, minV)
+                .overlay(overlay)
+                .light(light)
+                .normal(normal, 0, 0, -1)
+                .next();
+
+        consumer.vertex(matrix, 0.25f*sizeX, -0.25f*sizeY, 0)
+                .color(255,255,255,150)
+                .texture(maxU, maxV)
+                .overlay(overlay)
+                .light(light)
+                .normal(normal, 0, 0, -1)
+                .next();
+
+        consumer.vertex(matrix, -0.25f*sizeX, -0.25f*sizeY, 0)
+                .color(255,255,255,150)
+                .texture(minU, maxV)
+                .overlay(overlay)
+                .light(light)
+                .normal(normal, 0, 0, -1)
+                .next();
+
     }
+
 }
+

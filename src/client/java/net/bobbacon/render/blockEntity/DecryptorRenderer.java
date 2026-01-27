@@ -42,12 +42,7 @@ public class DecryptorRenderer implements BlockEntityRenderer<Decryptor> {
                 entity.getWorld(),
                 entity.getPos().up()
         );
-        DecryptionTableRenderer tableRenderer= renderers.get(entity);
-        if (tableRenderer==null){
-            tableRenderer= new DecryptionTableRenderer(this);
-            renderers.put(entity,tableRenderer);
-        }
-        tableRenderer.renderTick(entity, tickDelta, matrices, vertexConsumers, light, overlay);
+
         matrices.push();
 
         matrices.translate(0.5, 1.2, 0.4);
@@ -56,7 +51,7 @@ public class DecryptorRenderer implements BlockEntityRenderer<Decryptor> {
         int angle2 = 0;
         if (entity.isInEndAnimation()){
             float progress= entity.endAnimationProgress();
-            float coefficient= 0.4f/(progress+0.3f)-0.3f;
+            float coefficient= 0.4f/(progress+0.306226f)-0.306226f;
             matrices.translate(0,-0.425f*(1f-coefficient),0);
             angle2= (int) (angle*(coefficient));
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(67.5f-67.5f*coefficient));
@@ -85,5 +80,12 @@ public class DecryptorRenderer implements BlockEntityRenderer<Decryptor> {
         );
 
         matrices.pop();
+
+        DecryptionTableRenderer tableRenderer= renderers.get(entity);
+        if (tableRenderer==null){
+            tableRenderer= new DecryptionTableRenderer(this);
+            renderers.put(entity,tableRenderer);
+        }
+        tableRenderer.renderTick(entity, tickDelta, matrices, vertexConsumers, light, overlay);
     }
 }

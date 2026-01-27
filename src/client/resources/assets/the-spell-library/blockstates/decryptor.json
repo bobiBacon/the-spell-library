@@ -1,12 +1,8 @@
 {
   "variants": {
-    "facing=north,decrypted=false": { "model": "the-spell-library:block/decryptor", "uvlock": false },
-    "facing=east,decrypted=false":  { "model": "the-spell-library:block/decryptor", "y":  90, "uvlock":false },
-    "facing=south,decrypted=false": { "model": "the-spell-library:block/decryptor", "y": 180, "uvlock": false },
-    "facing=west,decrypted=false":  { "model": "the-spell-library:block/decryptor", "y": 270, "uvlock": false },
-    "facing=north,decrypted=true": { "model": "the-spell-library:block/decryptor_with_table", "uvlock": false },
-    "facing=east,decrypted=true":  { "model": "the-spell-library:block/decryptor_with_table", "y":  90, "uvlock":false },
-    "facing=south,decrypted=true": { "model": "the-spell-library:block/decryptor_with_table", "y": 180, "uvlock": false },
-    "facing=west,decrypted=true":  { "model": "the-spell-library:block/decryptor_with_table", "y": 270, "uvlock": false }
-  }
+    "facing=north": { "model": "the-spell-library:block/decryptor", "uvlock": false },
+    "facing=east":  { "model": "the-spell-library:block/decryptor", "y":  90, "uvlock":false },
+    "facing=south": { "model": "the-spell-library:block/decryptor", "y": 180, "uvlock": false },
+    "facing=west":  { "model": "the-spell-library:block/decryptor", "y": 270, "uvlock": false }
+    }
 }

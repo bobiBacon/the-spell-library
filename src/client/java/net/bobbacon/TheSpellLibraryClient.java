@@ -1,6 +1,7 @@
 package net.bobbacon;
 
 import net.bobbacon.item.ScrollItem;
+import net.bobbacon.render.ModRenderLayers;
 import net.bobbacon.render.blockEntity.BlockEntityRenderers;
 import net.bobbacon.spell.SpellType;
 import net.fabricmc.api.ClientModInitializer;
@@ -14,6 +15,7 @@ public class TheSpellLibraryClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
         BlockEntityRenderers.init();
+        ModRenderLayers.init();
         ItemTooltipCallback.EVENT.register((stack, context, tooltip) -> {
             if (!(stack.getItem() instanceof ScrollItem)) return;
 
