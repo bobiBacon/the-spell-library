@@ -30,7 +30,7 @@ public class DecryptionTableParticleRenderer {
     public final float sizeY;
 
 
-    public DecryptionTableParticleRenderer(float y, int angle, Vec2f origin, float speed, float sizeX, float sizeY) {
+    public DecryptionTableParticleRenderer(float y, int angle, Vec2f origin, float speed, float sizeX, float sizeY, float endProgress) {
         this.y = y;
         this.x=origin.x;
         this.z=origin.y;
@@ -41,6 +41,7 @@ public class DecryptionTableParticleRenderer {
         posOnTable= origin;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
+        aspiringTick(endProgress);
     }
     public void turningTick(float endProgress){
 
@@ -89,10 +90,7 @@ public class DecryptionTableParticleRenderer {
                 RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
 
         );
-        VertexConsumer consumer1 = vertexConsumers.getBuffer(
-                RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
 
-        );
 
         matrices.push();
 
@@ -104,7 +102,7 @@ public class DecryptionTableParticleRenderer {
 
         light=255;
 
-        render(entity,matrices,sprite,consumer,consumer1,light);
+        render(entity,matrices,sprite,consumer,light);
 
         matrices.pop();
     }
@@ -122,9 +120,7 @@ public class DecryptionTableParticleRenderer {
         VertexConsumer consumer = vertexConsumers.getBuffer(
                 RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
         );
-        VertexConsumer consumer1 = vertexConsumers.getBuffer(
-                RenderLayer.getEntityTranslucentCull(sprite.getAtlasId())
-        );
+
 
         matrices.push();
         int angle2= 90+angle;
@@ -147,7 +143,7 @@ public class DecryptionTableParticleRenderer {
 
         light=255;
 
-        render(entity,matrices,sprite,consumer,consumer1,light);
+        render(entity,matrices,sprite,consumer,light);
 
         matrices.pop();
     }
@@ -156,7 +152,6 @@ public class DecryptionTableParticleRenderer {
             MatrixStack matrices,
             Sprite sprite,
             VertexConsumer consumer,
-            VertexConsumer consumer1,
             int light
     ){
 
@@ -209,7 +204,6 @@ public class DecryptionTableParticleRenderer {
                 .light(light)
                 .normal(normal, 0, 0, 1)
                 .next();
-        //je pourais tricher un peu en changeant le rendu quand je suis en tablette et en particules
         // BACK (ordre inversé)
         consumer.vertex(matrix, -0.25f*sizeX, 0.25f*sizeY, 0)
                 .color(255,255,255,150)

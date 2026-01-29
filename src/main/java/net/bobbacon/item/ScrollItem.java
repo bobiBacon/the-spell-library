@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -83,7 +84,7 @@ public class ScrollItem extends Item {
         for (NbtElement nbt:stack.getOrCreateNbt().getList(PLAYERS_KEY,NbtElement.STRING_TYPE)){
             NbtString nbt2= (NbtString) nbt;
             UUID uuid= UUID.fromString(nbt2.asString());
-            if (player.getUuid()==uuid){
+            if (player.getUuid().equals(uuid)){
                 return true;
             }
         }
@@ -92,7 +93,10 @@ public class ScrollItem extends Item {
 
 
     public static void decrypt(PlayerEntity player,ItemStack stack){
-        stack.getOrCreateNbt().getList(PLAYERS_KEY,NbtElement.STRING_TYPE).addElement(0,NbtString.of(player.getUuid().toString()));
+        NbtCompound nbt= stack.getOrCreateNbt();
+        NbtList list= nbt.getList(PLAYERS_KEY,NbtElement.STRING_TYPE);
+        list.add(NbtString.of(player.getUuid().toString()));
+        nbt.put(PLAYERS_KEY,list);
     }
 
     @Override

@@ -2,21 +2,22 @@ package net.bobbacon.block.entity;
 
 import net.bobbacon.block.DecryptorBlock;
 import net.bobbacon.item.ModItems;
+import net.bobbacon.item.ScrollItem;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -29,10 +30,22 @@ public class Decryptor extends BlockEntity {
 
 
     protected DefaultedList<ItemStack> items= DefaultedList.ofSize(1,ItemStack.EMPTY);
-    public float endProgress=0;
+    protected float endProgress=0;
     public static final String STATE_KEY ="current_state";
     public State state= State.IDLE;
-
+//    static {
+//        ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((BlockEntity entity, ServerWorld world)->{
+//            if (entity instanceof Decryptor decryptor){
+//                if (decryptor.isInEndAnimation()){
+//                    decryptor.setState(State.IDLE_DECRYPTED);
+//                }
+//                if (decryptor.isDecrypted()){
+//                    decryptor.endProgress=1;
+//                }
+////                decryptor.markDirtyAndSync();
+//            }
+//        });
+//    }
 
     public Decryptor(BlockPos pos, BlockState state) {
         super(ModBEs.DECRYPTOR, pos, state);
@@ -42,23 +55,23 @@ public class Decryptor extends BlockEntity {
         if (decryptor.state==State.DECRYPTING&&world.getTimeOfDay()%60==0){
             Random random= new Random();
             if (random.nextFloat()>=0.66){
-                      decryptor.decrypt();
+                      decryptor.startTransition();
             }
         }
         if (decryptor.isInEndAnimation()){
             decryptor.endProgress+=0.01f;
             if (decryptor.endProgress>=1){
-                decryptor.setState(State.IDLE_DECRYPTED,state);
-                decryptor.markDirtyAndSync();
+                decryptor.decrypt(state);
             }
         }
     }
-    public void setState(State state, BlockState blockState){
-        this.state= state;
-        setBlockStateDecrypted(state==State.IDLE_DECRYPTED,blockState);
+    public void decrypt(BlockState state){
+        this.setState(State.IDLE_DECRYPTED);
+        this.markDirtyAndSync();
     }
-    public void setBlockStateDecrypted(boolean value, BlockState state){
-        world.setBlockState(pos, state.with(DecryptorBlock.DECRYPTED, value), Block.NOTIFY_ALL);
+    public void setState(State state){
+        this.state= state;
+        this.markDirtyAndSync();
     }
 
     public ItemStack getStack() {
@@ -69,13 +82,7 @@ public class Decryptor extends BlockEntity {
         super.readNbt(nbt);
         Inventories.readNbt(nbt,items);
         int stateInt= nbt.getInt(STATE_KEY);
-        setState( switch (stateInt){
-            case 0 ->State.IDLE;
-            case 1 ->State.IDLE_DECRYPTED;
-            case 2 ->State.DECRYPTING;
-            case 3 ->State.TRANSITION;
-            default -> throw new IllegalStateException("Unexpected value: " + stateInt);
-        },world.getBlockState(pos));
+        setState(State.fromInt(stateInt));
     }
 
     @Override
@@ -95,15 +102,17 @@ public class Decryptor extends BlockEntity {
             markDirtyAndSync();
             return ActionResult.SUCCESS;
         } else if (playerStack.isEmpty() || ItemStack.canCombine(playerStack, stack)) {
+            ScrollItem.decrypt(player,stack);
             player.giveItemStack(stack);
             stack.decrement(1);
             setStack(stack);
-            setState(State.IDLE,state);
+            setState(State.IDLE);
             markDirtyAndSync();
             return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
     }
+
     public boolean isDecrypting(){
         return state==State.DECRYPTING;
     }
@@ -111,20 +120,19 @@ public class Decryptor extends BlockEntity {
         boolean isDecrypting=items.get(0).isOf(ModItems.SCROLL);
 
         if (isDecrypting){
-            setState(State.DECRYPTING,world.getBlockState(pos));
+            setState(State.DECRYPTING);
             endProgress=0f;
             markDirtyAndSync();
         }
         return isDecrypting;
     }
-    public void decrypt(){
-        setState(State.TRANSITION,world.getBlockState(pos));
-
-
+    public void startTransition(){
+        setState(State.TRANSITION);
         markDirtyAndSync();
     }
     public float endAnimationProgress(){
-        return Math.min(endProgress,1);
+
+        return isDecrypted()?1f:Math.min(endProgress,1);
     }
     public boolean isInEndAnimation(){
         return state==State.TRANSITION;
@@ -157,6 +165,11 @@ public class Decryptor extends BlockEntity {
         return state==State.IDLE_DECRYPTED;
     }
 
+    @Override
+    public void setWorld(World world) {
+        super.setWorld(world);
+    }
+
     public enum State{
         IDLE_DECRYPTED(1),
         IDLE(0),
@@ -169,6 +182,15 @@ public class Decryptor extends BlockEntity {
 
         public int toInt(){
             return id;
+        }
+        public static State fromInt(int id){
+            return switch (id){
+                case 0 ->State.IDLE;
+                case 1 ->State.IDLE_DECRYPTED;
+                case 2 ->State.DECRYPTING;
+                case 3 ->State.TRANSITION;
+                default -> throw new IllegalStateException("Unexpected value: " + id);
+            };
         }
     }
 }

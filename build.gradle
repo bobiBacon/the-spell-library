@@ -35,7 +35,11 @@ loom {
 		}
 	}
 	accessWidenerPath = file("src/main/resources/the-spell-library.accesswidener")
-
+	runs {
+		client {
+			programArgs(["--username", "bobi_bacon", "--uuid", "a375f567-9bee-4ec3-bab0-7a5816af964e"])
+		}
+	}
 }
 
 fabricApi {

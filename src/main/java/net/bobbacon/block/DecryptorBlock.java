@@ -1,6 +1,5 @@
 package net.bobbacon.block;
 
-import com.google.common.collect.ImmutableMap;
 import net.bobbacon.block.entity.Decryptor;
 import net.bobbacon.block.entity.ModBEs;
 import net.minecraft.block.*;
@@ -11,23 +10,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public class DecryptorBlock extends BlockWithEntity {
-    public static final BooleanProperty DECRYPTED = BooleanProperty.of("decrypted");
+//    public static final BooleanProperty DECRYPTED = BooleanProperty.of("decrypted");
     private static final VoxelShape BASE_SHAPE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 1.0, 15.0);
     private static final VoxelShape STEP_SHAPE = Block.createCuboidShape(2.0, 1.0, 2.0, 14.0, 2.0, 14.0);
     private static final VoxelShape STEM_SHAPE = Block.createCuboidShape(3.0, 2.0, 3.0, 13.0, 13.0, 13.0);
@@ -71,11 +67,11 @@ public class DecryptorBlock extends BlockWithEntity {
     }
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING,DECRYPTED);
+        builder.add(Properties.HORIZONTAL_FACING);
     }
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite()).with(DECRYPTED,false);
+        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
 }
