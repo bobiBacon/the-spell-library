@@ -1,23 +1,17 @@
 package net.bobbacon.spell;
 
 import net.bobbacon.TheSpellLibrary;
-import net.bobbacon.api.RegistryHelper;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class SpellType<T extends Spell> {
-    private static final RegistryHelper<SpellType<?>> registryHelper= new RegistryHelper<>(SpellRegistry.SPELL_TYPES, TheSpellLibrary.MOD_ID);
 
-    public static final SpellType<?> Example= registryHelper.register("example",new SpellType<>(ExampleSpell::new));
-    public static final SpellType<?> EMPTY= registryHelper.register("empty",new SpellType<>(Spell::new));
 
     public boolean creativeTab= true;
-    public static void init(){
-
-    }
+    public boolean isSingleUse= true;
+    public int cooldown= 0;
 
     private final SpellFactory<T> factory;
 
@@ -25,16 +19,21 @@ public class SpellType<T extends Spell> {
     public SpellType(SpellFactory<T> factory) {
         this.factory = factory;
     }
-    public T create(World world, LivingEntity player){
-        return factory.create(this,world,player);
-    }
-
-    public Identifier getId(){
-        return SpellRegistry.SPELL_TYPES.getId(this);
-    }
     public SpellType<T> hideInCreativeTab(){
         creativeTab=false;
         return this;
+    }
+    public SpellType<T> cooldown(int cooldown){
+        isSingleUse=false;
+        this.cooldown= cooldown;
+        return this;
+    }
+
+    public T create(World world, LivingEntity user){
+        return factory.create(this,world,user);
+    }
+    public Identifier getId(){
+        return SpellRegistry.SPELL_TYPES.getId(this);
     }
     public Identifier getModelId() {
         Identifier spellId= SpellRegistry.SPELL_TYPES.getId(this);
@@ -82,7 +81,7 @@ public class SpellType<T extends Spell> {
         return Identifier.of(base.getNamespace(),base.getPath()+"_simple");
     }
     public boolean isEmpty(){
-        return this.getId() == EMPTY.getId();
+        return this.getId() == SpellTypes.EMPTY.getId();
     }
 
     public interface SpellFactory<T extends Spell> {

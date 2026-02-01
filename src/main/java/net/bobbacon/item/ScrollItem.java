@@ -1,9 +1,11 @@
 package net.bobbacon.item;
 
+import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.spell.SpellRegistry;
 import net.bobbacon.spell.Spell;
 import net.bobbacon.spell.SpellType;
+import net.bobbacon.spell.SpellTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -32,23 +34,47 @@ public class ScrollItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack= user.getStackInHand(hand);
         Spell spell= getSpell(stack).create(world,user);
-        user.setCurrentHand(hand);
-        return spell.canCast(user.getBlockPos())? TypedActionResult.consume(stack):TypedActionResult.pass(stack);
+        boolean b= spell.canCast(user.getBlockPos());
+        if (b){
+            user.setCurrentHand(hand);
+            return TypedActionResult.consume(stack);
+        }
+        return TypedActionResult.fail(stack);
     }
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
         Spell spell= getSpell(stack).create(world,user);
-        if (spell.tryCast(user.getBlockPos())&&spell.isSingleUse()){
-            stack.decrement(1);
+        boolean b= spell.tryCast(user.getBlockPos());
+        if (!b){
+            return super.finishUsing(stack, world, user);
         }
-        return super.finishUsing(stack, world, user);
+        boolean b2= true;
+        if (user instanceof PlayerEntity player){
+            b2= !player.isCreative();
+
+
+        }
+        if (spell.isSingleUse()){
+            if (b2){
+                stack.decrement(1);
+            }
+        }
+        //apply cooldown
+        ((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns()
+                .set(spell.type, spell.cooldownTime());
+
+        return stack;
     }
 
 
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        Spell spell= getSpell(stack).create(world,user);
+        if (!spell.canCast(user.getBlockPos())){
+
+        }
         if (remainingUseTicks==0){
             finishUsing(stack,world,user);
         }
@@ -59,13 +85,13 @@ public class ScrollItem extends Item {
         return UseAction.BOW;
     }
     public static SpellType<?> getSpell(ItemStack stack){
-        if (!stack.hasNbt()) return SpellType.EMPTY;
+        if (!stack.hasNbt()) return SpellTypes.EMPTY;
 
         NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains(SPELL_KEY, NbtElement.STRING_TYPE)) return SpellType.EMPTY;
+        if (!nbt.contains(SPELL_KEY, NbtElement.STRING_TYPE)) return SpellTypes.EMPTY;
 
         Identifier id = Identifier.tryParse(nbt.getString(SPELL_KEY));
-        if (id == null) return  SpellType.EMPTY;
+        if (id == null) return  SpellTypes.EMPTY;
 
         return SpellRegistry.SPELL_TYPES.get(id);
     }
@@ -110,6 +136,6 @@ public class ScrollItem extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        return 80;
+        return 20;
     }
 }

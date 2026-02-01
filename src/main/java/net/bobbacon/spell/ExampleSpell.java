@@ -14,8 +14,4 @@ public class ExampleSpell extends Spell{
     protected void cast(BlockPos pos) {
         user.sendMessage(Text.of("This is an example spell"));
     }
-    @Override
-    public boolean canCast(BlockPos pos) {
-        return true;
-    }
 }

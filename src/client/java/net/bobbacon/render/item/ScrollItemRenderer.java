@@ -105,7 +105,7 @@ public class ScrollItemRenderer {
                 .apply(spell.symbolTexture());
 
         VertexConsumer consumer = vertices.getBuffer(
-                RenderLayer.getEntitySolid(sprite.getAtlasId())
+                RenderLayer.getEntityCutoutNoCull(sprite.getAtlasId())
         );
 
         matrices.push();

@@ -39,12 +39,12 @@ public class EntityMixin implements EntityAccessor {
     }
 
     @Override
-    public boolean night_of_the_Dead$comesFromRitual() {
+    public boolean the_spell_library$comesFromRitual() {
         return comesFromRitual;
     }
 
     @Override
-    public void night_of_the_Dead$setComesFromRitual(boolean value, UUID id) {
+    public void the_spell_library$setComesFromRitual(boolean value, UUID id) {
         comesFromRitual= value;
         ritualId= id;
     }

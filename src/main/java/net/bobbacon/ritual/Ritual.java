@@ -1,7 +1,6 @@
 package net.bobbacon.ritual;
 
 import net.bobbacon.Accessors.EntityAccessor;
-import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -242,7 +241,7 @@ public abstract class Ritual {
                         player -> players.contains(player.getUuid())
                 )
         );
-        ((EntityAccessor)entity).night_of_the_Dead$setComesFromRitual(true,id);
+        ((EntityAccessor)entity).the_spell_library$setComesFromRitual(true,id);
         entity.setPersistent();
         spawnEntity(entity);
     }
