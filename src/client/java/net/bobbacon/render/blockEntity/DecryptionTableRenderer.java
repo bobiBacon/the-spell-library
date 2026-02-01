@@ -67,6 +67,8 @@ public class DecryptionTableRenderer {
 
             if (!entity.isDecrypted()){
                 particleRenderer.turningTick(entity.endAnimationProgress());
+            }else {
+                particleRenderer.decryptedTick();
             }
             if (entity.isInEndAnimation()){
                 particleRenderer.aspiringTick(entity.endAnimationProgress());
@@ -74,9 +76,14 @@ public class DecryptionTableRenderer {
             particleRenderer.renderMain(entity, tickDelta, matrices, vertexConsumers, light);
         }
         for (DecryptionTableParticleRenderer particleRenderer: secondaryParticles){
+
             float progress= entity.endAnimationProgress();
             if (progress>0.9f){
-                particleRenderer.aspiringTick((progress-0.9f)*10f);
+                if (entity.isDecrypted()){
+                    particleRenderer.decryptedTick();
+                }else {
+                    particleRenderer.aspiringTick((progress-0.9f)*10f);
+                }
                 particleRenderer.renderSecond(entity, tickDelta, matrices, vertexConsumers, light);
             }
         }

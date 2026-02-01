@@ -73,7 +73,11 @@ public class DecryptionTableParticleRenderer {
         x= (float) pos2.x;
         y= (float) pos2.y;
         z= (float) pos2.z;
-
+    }
+    public void decryptedTick(){
+        x= (float) origin.x;
+        y= (float) origin.y;
+        z= (float) origin.z;
     }
     public void renderSecond(
             Decryptor entity,

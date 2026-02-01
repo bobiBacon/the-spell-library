@@ -105,7 +105,7 @@ public class ScrollItemRenderer {
                 .apply(spell.symbolTexture());
 
         VertexConsumer consumer = vertices.getBuffer(
-                RenderLayer.getEntityCutoutNoCull(sprite.getAtlasId())
+                RenderLayer.getEntitySolid(sprite.getAtlasId())
         );
 
         matrices.push();
@@ -113,15 +113,18 @@ public class ScrollItemRenderer {
 
 
         matrices.scale(0.3f, 0.3f, 0.3f);
-
+        float x=-0.45f;
+        if (leftHanded){
+            x=(-1)*x;
+        }
 
         matrices.multiply(
                 RotationAxis.POSITIVE_Y.rotationDegrees(
                         (MinecraftClient.getInstance().world.getTime() % 90) * 4
                 ),
-                -0.45f,0.9f,0.6f
+                x,0.9f,0.6f
         );
-        matrices.translate(-0.45, 0.9, 0.6);
+        matrices.translate(x, 0.9, 0.6);
 
         MatrixStack.Entry entry = matrices.peek();
         Matrix4f matrix = entry.getPositionMatrix();
