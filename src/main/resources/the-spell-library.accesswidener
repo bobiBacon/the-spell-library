@@ -4,3 +4,8 @@ accessible field net/minecraft/entity/mob/MobEntity targetSelector Lnet/minecraf
 
 accessible class net/minecraft/client/render/RenderLayer$MultiPhaseParameters
 accessible class net/minecraft/client/render/RenderPhase$Texture
+
+accessible field net/minecraft/client/gui/hud/InGameHud client Lnet/minecraft/client/MinecraftClient;
+accessible method net/minecraft/client/gui/hud/InGameHud getCameraPlayer ()Lnet/minecraft/entity/player/PlayerEntity;
+accessible field net/minecraft/client/gui/hud/InGameHud scaledHeight I
+accessible field net/minecraft/client/gui/hud/InGameHud scaledWidth I

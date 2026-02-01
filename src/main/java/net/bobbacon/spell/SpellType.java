@@ -12,12 +12,14 @@ public class SpellType<T extends Spell> {
     public boolean creativeTab= true;
     public boolean isSingleUse= true;
     public int cooldown= 0;
+    public float manaCost=0;
 
     private final SpellFactory<T> factory;
 
 
-    public SpellType(SpellFactory<T> factory) {
+    public SpellType(SpellFactory<T> factory, float manaCost) {
         this.factory = factory;
+        this.manaCost= manaCost;
     }
     public SpellType<T> hideInCreativeTab(){
         creativeTab=false;
@@ -26,6 +28,10 @@ public class SpellType<T extends Spell> {
     public SpellType<T> cooldown(int cooldown){
         isSingleUse=false;
         this.cooldown= cooldown;
+        return this;
+    }
+    public SpellType<T> mana(float amount){
+        this.manaCost=amount;
         return this;
     }
 

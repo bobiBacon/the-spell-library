@@ -12,6 +12,7 @@ public class ExampleSpell extends Spell{
 
     @Override
     protected void cast(BlockPos pos) {
+        super.cast(pos);
         user.sendMessage(Text.of("This is an example spell"));
     }
 }

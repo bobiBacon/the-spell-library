@@ -1,5 +1,6 @@
 package net.bobbacon;
 
+import net.bobbacon.attributes.ModEntityAttributes;
 import net.bobbacon.block.ModBlocks;
 import net.bobbacon.block.entity.ModBEs;
 import net.bobbacon.item.ModItems;
@@ -31,5 +32,6 @@ public class TheSpellLibrary implements ModInitializer {
 		RitualManager.init();
 		ModBlocks.init();
 		ModBEs.init();
+		ModEntityAttributes.init();
 	}
 }

@@ -2,8 +2,10 @@ package net.bobbacon.spell;
 
 
 import net.bobbacon.Accessors.LivingEntityAccessor;
+import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -28,11 +30,22 @@ public class Spell {
         return casted;
     }
     protected void cast(BlockPos pos){
-
+        consumeMana();
+    }
+    public void consumeMana(){
+        if (user instanceof PlayerEntity player){
+            ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost);
+        }
+    }
+    public boolean hasEnoughMana(){
+        if (user instanceof PlayerEntity player){
+            return ((PlayerAccessor)player).the_spell_library$getMana()>=type.manaCost;
+        }
+        return true;
     }
     public boolean canCast(BlockPos pos){
         TheSpellLibrary.LOGGER.info("is cooling down: "+ ((LivingEntityAccessor) user).the_spell_library$getSpellCooldowns().isCoolingDown(type));
-        return type!=SpellTypes.EMPTY&&!((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns().isCoolingDown(type);
+        return type!=SpellTypes.EMPTY && !((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns().isCoolingDown(type) && hasEnoughMana();
     }
 
     public boolean isSingleUse(){
