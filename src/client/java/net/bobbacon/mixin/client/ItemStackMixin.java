@@ -30,7 +30,7 @@ public class ItemStackMixin {
         if (spell == null||spell.isEmpty()) return;
 
         if (ScrollItem.canRead(client.player, self)){
-            cir.setReturnValue(Text.translatable("item.night-of-the-dead.scroll.spell."+ SpellRegistry.SPELL_TYPES.getId(spell).getPath()));
+            cir.setReturnValue(Text.translatable("item.the-spell-library.scroll.spell."+ SpellRegistry.SPELL_TYPES.getId(spell).getPath()));
         }
     }
 }

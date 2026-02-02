@@ -1,5 +1,7 @@
 {
   "item.the-spell-library.scroll": "Unknown Scroll",
   "item.the-spell-library.scroll.blank": "Blank Scroll",
-  "item.the-spell-library.scroll.spell.example": "Example Scroll"
+  "item.the-spell-library.scroll.spell.example": "Example Scroll",
+  "spell.the-spell-library.error.not_enough_mana": "Not enough mana"
+
 }

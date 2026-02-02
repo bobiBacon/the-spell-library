@@ -71,10 +71,6 @@ public class ScrollItem extends Item {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        Spell spell= getSpell(stack).create(world,user);
-        if (!spell.canCast(user.getBlockPos())){
-
-        }
         if (remainingUseTicks==0){
             finishUsing(stack,world,user);
         }
