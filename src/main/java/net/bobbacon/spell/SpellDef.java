@@ -16,6 +16,9 @@ public class  SpellDef<T extends Spell> {
     public Identifier customTextureId= null;
     public int cooldown= 0;
     public float manaCost=0;
+    public int primaryColor=0;
+    public int secondaryColor=0;
+    public Identifier tintedTexture2dId = null;
     private final Spell template;
 
     public SpellDef(Spell template, float manaCost) {
@@ -26,8 +29,17 @@ public class  SpellDef<T extends Spell> {
         creativeTab=false;
         return this;
     }
-    public SpellDef<? extends Spell> customSymbolPath(Identifier id){
-        customTextureId= id;
+    public SpellDef<? extends Spell> customSymbolPath(Identifier path){
+        customTextureId= path;
+        return this;
+    }
+    public SpellDef<? extends Spell> useTinted2dSymbol(int primaryColor, int secondaryColor){
+        return useTinted2dSymbol(primaryColor,secondaryColor,new Identifier(TheSpellLibrary.MOD_ID,"item/spell/tintable_simple"));
+    }
+    public SpellDef<? extends Spell> useTinted2dSymbol(int primaryColor, int secondaryColor,Identifier texturePath){
+        this.primaryColor= primaryColor;
+        this.secondaryColor= secondaryColor;
+        this.tintedTexture2dId = texturePath;
         return this;
     }
     public SpellDef<? extends Spell> setCooldown(int cooldown){
@@ -63,6 +75,12 @@ public class  SpellDef<T extends Spell> {
         }
         return Identifier.of(nameSpace,path);
     }
+    public Identifier symbolTextureTinted2dBase(){
+        return new Identifier(tintedTexture2dId.getNamespace(), tintedTexture2dId.getPath()+"_base");
+    }
+    public Identifier symbolTextureTinted2dOverlay(){
+        return new Identifier(tintedTexture2dId.getNamespace(), tintedTexture2dId.getPath()+"_overlay");
+    }
     /**
      * Returns id of this SpellType's texture or {{null}} if spell is empty or not registered.
      * This texture is located at mod_id/textures/item/spell/spell_id
@@ -96,6 +114,9 @@ public class  SpellDef<T extends Spell> {
             return null;
         }
         return Identifier.of(base.getNamespace(),base.getPath()+"_simple");
+    }
+    public boolean usesTintedTexture(){
+        return primaryColor!=0 && secondaryColor!=0;
     }
     public boolean isEmpty(){
         return this.getId() == SpellDefs.EMPTY.getId();

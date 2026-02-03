@@ -1,6 +1,8 @@
 package net.bobbacon.render.item;
 
+import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.item.ScrollItem;
+import net.bobbacon.render.RenderUtil;
 import net.bobbacon.spell.SpellDef;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -14,6 +16,7 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -26,63 +29,29 @@ public class ScrollItemRenderer {
             VertexConsumerProvider consumers,
             int overlay
     ) {
-        MinecraftClient client = MinecraftClient.getInstance();
         SpellDef<?> spell = ScrollItem.getSpell(stack);
         if (spell == null || spell.isEmpty()) return;
-        Sprite sprite = client.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
-                .apply(spell.symbolTextureFor2d());
+        Identifier texture;
+        int red=255;
+        int green= 255;
+        int blue= 255;
+        if (spell.usesTintedTexture()){
+            texture= spell.symbolTextureTinted2dBase();
+            red= getRedFromHexa(spell.primaryColor);
+            green= getGreenFromHexa(spell.primaryColor);
+            blue= getBlueFromHexa(spell.primaryColor);
+        }else {
+            texture= spell.symbolTextureFor2d();
+        }
 
 
         matrices.push();
 
-        // On se place AU-DESSUS de l'item
         matrices.translate(0f, 0f, 1);
-        matrices.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(90));
+        matrices.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(90),0,0,1);
 
-        Matrix4f matrix = matrices.peek().getPositionMatrix();
+        RenderUtil.render2dItemLike(matrices,consumers,red,green,blue,overlay,texture);
 
-        VertexConsumer vc = consumers.getBuffer(
-                RenderLayer.getEntityCutoutNoCull(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-        );
-
-        int light = 0xF000F0; // FULL BRIGHT
-
-        float min = 4f;
-        float max = 12f;
-        MatrixStack.Entry entry = matrices.peek();
-        Matrix3f normal = entry.getNormalMatrix();
-
-        vc.vertex(matrix, -0.5f, -0.5f, 0)
-                .color(255, 255, 255, 255)
-                .texture(sprite.getMinU(), sprite.getMinV())
-                .overlay(overlay)
-                .light(light)
-                .normal(normal, 0, 0, 1)
-                .next();
-
-        vc.vertex(matrix, 0.5f, -0.5f, 0)
-                .color(255, 255, 255, 255)
-                .texture(sprite.getMaxU(), sprite.getMinV())
-                .overlay(overlay)
-                .light(light)
-                .normal(normal, 0, 0, 1)
-                .next();
-
-        vc.vertex(matrix, 0.5f, 0.5f, 0)
-                .color(255, 255, 255, 255)
-                .texture(sprite.getMaxU(), sprite.getMaxV())
-                .overlay(overlay)
-                .light(light)
-                .normal(normal, 0, 0, 1)
-                .next();
-
-        vc.vertex(matrix, -0.5f, 0.5f, 0)
-                .color(255, 255, 255, 255)
-                .texture(sprite.getMinU(), sprite.getMaxV())
-                .overlay(overlay)
-                .light(light)
-                .normal(normal, 0, 0, 1)
-                .next();
 
         matrices.pop();
     }
@@ -166,5 +135,14 @@ public class ScrollItemRenderer {
                 .next();
 
         matrices.pop();
+    }
+    public static int getRedFromHexa(int hexadecimal){
+        return  (hexadecimal >> 16) & 0xFF;
+    }
+    public static int getGreenFromHexa(int hexadecimal){
+        return (hexadecimal >> 8) & 0xFF;
+    }
+    public static int getBlueFromHexa(int hexadecimal){
+        return hexadecimal & 0xFF;
     }
 }
