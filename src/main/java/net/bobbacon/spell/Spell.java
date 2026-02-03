@@ -3,7 +3,6 @@ package net.bobbacon.spell;
 
 import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
-import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -11,14 +10,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class Spell {
-    public final SpellType<? extends Spell> type;
+    public final SpellDef<? extends Spell> type;
     public final World world;
     public final LivingEntity user;
 
-    public Spell(SpellType<? extends Spell> type, World world, LivingEntity user) {
+    protected Spell(SpellDef<? extends Spell> type, World world, LivingEntity user, Spell Template) {
         this.type = type;
         this.world = world;
         this.user = user;
+    }
+    Spell() {
+        this.type = null;
+        world=null;
+        user=null;
+    }
+    public Spell createFromTemplate(SpellDef<? extends Spell> type, World world, LivingEntity user) {
+        return new Spell(type,world,user,this);
     }
 
     public boolean casted= false;
@@ -32,7 +39,7 @@ public class Spell {
         consumeMana();
     }
     public void consumeMana(){
-        if (user instanceof PlayerEntity player){
+        if (user instanceof PlayerEntity player&&!player.isCreative()){
             ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost);
         }
     }
@@ -47,7 +54,7 @@ public class Spell {
         if (!enoughMana && user instanceof PlayerEntity player){
             player.sendMessage(Text.translatable("spell.the-spell-library.error.not_enough_mana"),true);
         }
-        return type!=SpellTypes.EMPTY && !((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns().isCoolingDown(type) && hasEnoughMana();
+        return type!= SpellDefs.EMPTY && !((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns().isCoolingDown(type) && hasEnoughMana();
     }
 
     public boolean isSingleUse(){
@@ -56,5 +63,6 @@ public class Spell {
     public int cooldownTime(){
         return type.cooldown;
     }
+
 
 }

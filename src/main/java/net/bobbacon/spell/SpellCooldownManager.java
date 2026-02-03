@@ -8,19 +8,19 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class SpellCooldownManager {
-    private final Map<SpellType<?>, SpellCooldownManager.Entry> entries = Maps.newHashMap();
+    private final Map<SpellDef<?>, SpellCooldownManager.Entry> entries = Maps.newHashMap();
     private int tick;
 
-    public boolean isCoolingDown(SpellType<?> spellType) {
-        boolean b= this.getCooldownProgress(spellType, 0.0F) > 0.0F;
+    public boolean isCoolingDown(SpellDef<?> spellDef) {
+        boolean b= this.getCooldownProgress(spellDef, 0.0F) > 0.0F;
         if (!b){
-            remove(spellType);
+            remove(spellDef);
         }
         return b;
     }
 
-    public float getCooldownProgress(SpellType<?> spellType, float tickDelta) {
-        SpellCooldownManager.Entry entry = this.entries.get(spellType);
+    public float getCooldownProgress(SpellDef<?> spellDef, float tickDelta) {
+        SpellCooldownManager.Entry entry = this.entries.get(spellDef);
         if (entry != null) {
             float f = entry.endTick - entry.startTick;
             float g = entry.endTick - (this.tick + tickDelta);
@@ -33,10 +33,10 @@ public class SpellCooldownManager {
     public void update() {
         if (!this.entries.isEmpty()) {
             this.tick++;
-            Iterator<Map.Entry<SpellType<?>, SpellCooldownManager.Entry>> iterator = this.entries.entrySet().iterator();
+            Iterator<Map.Entry<SpellDef<?>, SpellCooldownManager.Entry>> iterator = this.entries.entrySet().iterator();
 
             while (iterator.hasNext()) {
-                java.util.Map.Entry<SpellType<?>, SpellCooldownManager.Entry> entry = iterator.next();
+                java.util.Map.Entry<SpellDef<?>, SpellCooldownManager.Entry> entry = iterator.next();
                 TheSpellLibrary.LOGGER.info("cooling down");
                 if (entry.getValue().endTick <= this.tick) {
                     iterator.remove();
@@ -46,20 +46,20 @@ public class SpellCooldownManager {
         }
     }
 
-    public void set(SpellType<?> spellType, int duration) {
-        this.entries.put(spellType, new SpellCooldownManager.Entry(this.tick, this.tick + duration));
-        this.onCooldownUpdate(spellType, duration);
+    public void set(SpellDef<?> spellDef, int duration) {
+        this.entries.put(spellDef, new SpellCooldownManager.Entry(this.tick, this.tick + duration));
+        this.onCooldownUpdate(spellDef, duration);
     }
 
-    public void remove(SpellType<?> spellType) {
-        this.entries.remove(spellType);
-        this.onCooldownUpdate(spellType);
+    public void remove(SpellDef<?> spellDef) {
+        this.entries.remove(spellDef);
+        this.onCooldownUpdate(spellDef);
     }
 
-    protected void onCooldownUpdate(SpellType<?> spellType, int duration) {
+    protected void onCooldownUpdate(SpellDef<?> spellDef, int duration) {
     }
 
-    protected void onCooldownUpdate(SpellType<?> spellType) {
+    protected void onCooldownUpdate(SpellDef<?> spellDef) {
     }
 
     static class Entry {

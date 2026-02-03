@@ -6,9 +6,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ExampleSpell extends Spell{
-    public ExampleSpell(SpellType<? extends Spell> type, World world, LivingEntity player) {
-        super(type, world, player);
+    protected ExampleSpell(SpellDef<? extends Spell> type, World world, LivingEntity player, ExampleSpell template) {
+        super(type, world, player, template);
     }
+
+    ExampleSpell() {
+
+    }
+
+
+    @Override
+    public Spell createFromTemplate(SpellDef<? extends Spell> type, World world, LivingEntity user) {
+        return new ExampleSpell(type,world,user,this);
+    }
+
 
     @Override
     protected void cast(BlockPos pos) {

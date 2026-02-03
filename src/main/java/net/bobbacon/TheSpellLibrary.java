@@ -5,7 +5,7 @@ import net.bobbacon.block.ModBlocks;
 import net.bobbacon.block.entity.ModBEs;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.ritual.RitualManager;
-import net.bobbacon.spell.SpellTypes;
+import net.bobbacon.spell.SpellDefs;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class TheSpellLibrary implements ModInitializer {
 
 		LOGGER.info("Hello Fabric world!");
 
-		SpellTypes.init();
+		SpellDefs.init();
 		ModItems.init();
 		RitualManager.init();
 		ModBlocks.init();

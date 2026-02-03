@@ -9,15 +9,15 @@ import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 
 public class SpellRegistry {
-    private static final RegistryKey<Registry<SpellType<?>>> SPELL_REGISTRY_KEY =
+    private static final RegistryKey<Registry<SpellDef<?>>> SPELL_REGISTRY_KEY =
             RegistryKey.ofRegistry(new Identifier(TheSpellLibrary.MOD_ID, "spell"));
-    public static final SimpleRegistry<SpellType<?>> SPELL_TYPES = FabricRegistryBuilder.createSimple(SPELL_REGISTRY_KEY)
+    public static final SimpleRegistry<SpellDef<?>> SPELL_TYPES = FabricRegistryBuilder.createSimple(SPELL_REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
     public static void init(){
 
     }
-    public static SimpleRegistry<SpellType<?>> getSpellRegistry(){
+    public static SimpleRegistry<SpellDef<?>> getSpellRegistry(){
         return SPELL_TYPES;
     }
 }

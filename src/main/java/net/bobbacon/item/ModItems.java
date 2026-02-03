@@ -4,13 +4,9 @@ import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.api.RegistryHelper;
 import net.bobbacon.block.ModBlocks;
 import net.bobbacon.spell.SpellRegistry;
-import net.bobbacon.spell.SpellType;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.bobbacon.spell.SpellDef;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
-import net.minecraft.potion.Potion;
 import net.minecraft.registry.Registries;
 
 public class ModItems {
@@ -22,7 +18,7 @@ public class ModItems {
     public static void init(){
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(entries -> {
-                    for (SpellType<?> spell : SpellRegistry.SPELL_TYPES) {
+                    for (SpellDef<?> spell : SpellRegistry.SPELL_TYPES) {
                         if (!spell.isEmpty()&&spell.creativeTab){
                             ItemStack stack = new ItemStack(ModItems.SCROLL);
                             ScrollItem.setSpell(stack, spell);

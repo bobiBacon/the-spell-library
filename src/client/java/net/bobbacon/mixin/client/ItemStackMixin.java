@@ -3,7 +3,7 @@ package net.bobbacon.mixin.client;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.item.ScrollItem;
 import net.bobbacon.spell.SpellRegistry;
-import net.bobbacon.spell.SpellType;
+import net.bobbacon.spell.SpellDef;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -26,7 +26,7 @@ public class ItemStackMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
 
-        SpellType<?> spell = ScrollItem.getSpell(self);
+        SpellDef<?> spell = ScrollItem.getSpell(self);
         if (spell == null||spell.isEmpty()) return;
 
         if (ScrollItem.canRead(client.player, self)){

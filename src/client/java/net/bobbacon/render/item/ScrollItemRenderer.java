@@ -1,7 +1,7 @@
 package net.bobbacon.render.item;
 
 import net.bobbacon.item.ScrollItem;
-import net.bobbacon.spell.SpellType;
+import net.bobbacon.spell.SpellDef;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -27,7 +27,7 @@ public class ScrollItemRenderer {
             int overlay
     ) {
         MinecraftClient client = MinecraftClient.getInstance();
-        SpellType<?> spell = ScrollItem.getSpell(stack);
+        SpellDef<?> spell = ScrollItem.getSpell(stack);
         if (spell == null || spell.isEmpty()) return;
         Sprite sprite = client.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
                 .apply(spell.symbolTextureFor2d());
@@ -94,7 +94,7 @@ public class ScrollItemRenderer {
             float cooldown
     ) {
         MinecraftClient client = MinecraftClient.getInstance();
-        SpellType<?> spell = ScrollItem.getSpell(stack);
+        SpellDef<?> spell = ScrollItem.getSpell(stack);
         if (spell == null || spell.isEmpty()) return;
         Sprite sprite = client.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
                 .apply(spell.symbolTextureFor2d());
@@ -164,7 +164,7 @@ public class ScrollItemRenderer {
             BakedModel scrollModel
     ) {
         MinecraftClient client = MinecraftClient.getInstance();
-        SpellType<?> spell = ScrollItem.getSpell(stack);
+        SpellDef<?> spell = ScrollItem.getSpell(stack);
         if (spell == null || spell.isEmpty()) return;
 
 

@@ -3,40 +3,48 @@ package net.bobbacon.spell;
 import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class SpellType<T extends Spell> {
+//defines properties of a spell
+public class  SpellDef<T extends Spell> {
 
 
     public boolean creativeTab= true;
     public boolean isSingleUse= true;
+    public Identifier customTextureId= null;
     public int cooldown= 0;
     public float manaCost=0;
+    private final Spell template;
 
-    private final SpellFactory<T> factory;
-
-
-    public SpellType(SpellFactory<T> factory, float manaCost) {
-        this.factory = factory;
+    public SpellDef(Spell template, float manaCost) {
         this.manaCost= manaCost;
+        this.template = template;
     }
-    public SpellType<T> hideInCreativeTab(){
+    public SpellDef<? extends Spell> hideInCreativeTab(){
         creativeTab=false;
         return this;
     }
-    public SpellType<T> cooldown(int cooldown){
+    public SpellDef<? extends Spell> customSymbolPath(Identifier id){
+        customTextureId= id;
+        return this;
+    }
+    public SpellDef<? extends Spell> setCooldown(int cooldown){
         isSingleUse=false;
         this.cooldown= cooldown;
         return this;
     }
-    public SpellType<T> mana(float amount){
+    public SpellDef<? extends Spell> setMana(float amount){
         this.manaCost=amount;
         return this;
     }
 
-    public T create(World world, LivingEntity user){
-        return factory.create(this,world,user);
+    public Spell newSpell(World world, LivingEntity user){
+        return template.createFromTemplate(this,world,user);
+    }
+    public void cast(BlockPos pos){
+
     }
     public Identifier getId(){
         return SpellRegistry.SPELL_TYPES.getId(this);
@@ -61,6 +69,9 @@ public class SpellType<T extends Spell> {
      */
     @Nullable
     public Identifier symbolTexture() {
+        if (customTextureId!=null){
+            return customTextureId;
+        }
         Identifier spellId= SpellRegistry.SPELL_TYPES.getId(this);
         String path;
         String nameSpace;
@@ -87,10 +98,7 @@ public class SpellType<T extends Spell> {
         return Identifier.of(base.getNamespace(),base.getPath()+"_simple");
     }
     public boolean isEmpty(){
-        return this.getId() == SpellTypes.EMPTY.getId();
+        return this.getId() == SpellDefs.EMPTY.getId();
     }
 
-    public interface SpellFactory<T extends Spell> {
-        T create(SpellType<T> type, World world, LivingEntity player);
-    }
 }

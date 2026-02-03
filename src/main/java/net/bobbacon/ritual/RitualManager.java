@@ -1,7 +1,6 @@
 package net.bobbacon.ritual;
 
 import net.bobbacon.TheSpellLibrary;
-import net.bobbacon.spell.SpellType;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.entity.LivingEntity;

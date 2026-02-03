@@ -1,11 +1,10 @@
 package net.bobbacon.item;
 
 import net.bobbacon.Accessors.LivingEntityAccessor;
-import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.spell.SpellRegistry;
 import net.bobbacon.spell.Spell;
-import net.bobbacon.spell.SpellType;
-import net.bobbacon.spell.SpellTypes;
+import net.bobbacon.spell.SpellDef;
+import net.bobbacon.spell.SpellDefs;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -33,7 +32,7 @@ public class ScrollItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack= user.getStackInHand(hand);
-        Spell spell= getSpell(stack).create(world,user);
+        Spell spell= getSpell(stack).newSpell(world,user);
         boolean b= spell.canCast(user.getBlockPos());
         if (b){
             user.setCurrentHand(hand);
@@ -44,7 +43,7 @@ public class ScrollItem extends Item {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        Spell spell= getSpell(stack).create(world,user);
+        Spell spell= getSpell(stack).newSpell(world,user);
         boolean b= spell.tryCast(user.getBlockPos());
         if (!b){
             return super.finishUsing(stack, world, user);
@@ -80,18 +79,18 @@ public class ScrollItem extends Item {
     public UseAction getUseAction(ItemStack stack) {
         return UseAction.BOW;
     }
-    public static SpellType<?> getSpell(ItemStack stack){
-        if (!stack.hasNbt()) return SpellTypes.EMPTY;
+    public static SpellDef<?> getSpell(ItemStack stack){
+        if (!stack.hasNbt()) return SpellDefs.EMPTY;
 
         NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains(SPELL_KEY, NbtElement.STRING_TYPE)) return SpellTypes.EMPTY;
+        if (!nbt.contains(SPELL_KEY, NbtElement.STRING_TYPE)) return SpellDefs.EMPTY;
 
         Identifier id = Identifier.tryParse(nbt.getString(SPELL_KEY));
-        if (id == null) return  SpellTypes.EMPTY;
+        if (id == null) return  SpellDefs.EMPTY;
 
         return SpellRegistry.SPELL_TYPES.get(id);
     }
-    public static void setSpell(ItemStack stack, SpellType<?> spell) {
+    public static void setSpell(ItemStack stack, SpellDef<?> spell) {
         Identifier id= SpellRegistry.SPELL_TYPES.getId(spell);
         if (id==null){
             stack.getOrCreateNbt().putString(SPELL_KEY, "empty");
@@ -123,7 +122,7 @@ public class ScrollItem extends Item {
 
     @Override
     public String getTranslationKey(ItemStack stack) {
-        SpellType<?> spell = getSpell(stack);
+        SpellDef<?> spell = getSpell(stack);
         if (spell.isEmpty()){
              return "item.the-spell-library.scroll.blank";
          }

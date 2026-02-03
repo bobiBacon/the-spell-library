@@ -1,19 +1,12 @@
 package net.bobbacon.mixin.client;
 
-import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.TheSpellLibrary;
-import net.bobbacon.item.ModItems;
-import net.bobbacon.item.ScrollItem;
-import net.bobbacon.render.gui.CooldownRenderer;
-import net.bobbacon.spell.SpellType;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
