@@ -2,7 +2,7 @@ package net.bobbacon.mixin.client;
 
 import net.bobbacon.item.ModItems;
 import net.bobbacon.item.ScrollItem;
-import net.bobbacon.render.gui.CooldownRenderer;
+import net.bobbacon.render.gui.SpellGUIRenderer;
 import net.bobbacon.spell.SpellDef;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -21,6 +21,7 @@ public class DrawContextMixin {
         }
         SpellDef<?> type= ScrollItem.getSpell(stack);
         DrawContext self= ((DrawContext)(Object)this);
-        CooldownRenderer.renderCooldown(self,type,self.client.player,x,y);
+//        SpellGUIRenderer.renderSpellSymbol(self,type,x,y);
+        SpellGUIRenderer.renderCooldown(self,type,self.client.player,x,y);
     }
 }
