@@ -2,12 +2,15 @@ package net.bobbacon.block;
 
 import net.bobbacon.block.entity.Decryptor;
 import net.bobbacon.block.entity.ModBEs;
+import net.bobbacon.sound.ModSounds;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -16,6 +19,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -61,17 +65,30 @@ public class DecryptorBlock extends BlockWithEntity {
     }
 
     @Override
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        if (state.get(Properties.LIT)) {
+            double d = pos.getX() + 0.5;
+            double e = pos.getY();
+            double f = pos.getZ() + 0.5;
+            if (random.nextFloat()<0.1) {
+                world.playSound(d, e, f, ModSounds.DECRYPTOR, SoundCategory.BLOCKS, 1f, random.nextFloat()*0.4f+0.8f, true);
+            }
+
+        }
+    }
+
+    @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return VoxelShapes.union(BASE_SHAPE,STEM_SHAPE,STEP_SHAPE);
 
     }
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING);
+        builder.add(Properties.HORIZONTAL_FACING).add(Properties.LIT);
     }
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite()).with(Properties.LIT,false);
     }
 
 }

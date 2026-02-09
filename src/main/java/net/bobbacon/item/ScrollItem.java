@@ -36,6 +36,7 @@ public class ScrollItem extends Item {
         boolean b= spell.canCast(user.getBlockPos());
         if (b){
             user.setCurrentHand(hand);
+            spell.playCastingSound(user.getBlockPos());
             return TypedActionResult.consume(stack);
         }
         return TypedActionResult.fail(stack);
@@ -61,6 +62,7 @@ public class ScrollItem extends Item {
         }
         //apply cooldown
         ((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns()
+
                 .set(spell.type, spell.cooldownTime());
 
         return stack;
@@ -70,8 +72,14 @@ public class ScrollItem extends Item {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+
         if (remainingUseTicks==0){
             finishUsing(stack,world,user);
+            return;
+        }
+        if (((getMaxUseTime(stack)-remainingUseTicks)&11111)==0){
+            Spell spell= getSpell(stack).newSpell(world,user);
+//            spell.playCastingSound(user.getBlockPos());
         }
     }
 
@@ -131,6 +139,7 @@ public class ScrollItem extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        return 20;
+        SpellDef<?> spell= getSpell(stack);
+        return spell.getCastTime();
     }
 }

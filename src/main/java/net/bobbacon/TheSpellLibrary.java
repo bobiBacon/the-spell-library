@@ -5,6 +5,7 @@ import net.bobbacon.block.ModBlocks;
 import net.bobbacon.block.entity.ModBEs;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.ritual.RitualManager;
+import net.bobbacon.sound.ModSounds;
 import net.bobbacon.spell.SpellDefs;
 import net.fabricmc.api.ModInitializer;
 
@@ -33,5 +34,6 @@ public class TheSpellLibrary implements ModInitializer {
 		ModBlocks.init();
 		ModBEs.init();
 		ModEntityAttributes.init();
+		ModSounds.init();
 	}
 }

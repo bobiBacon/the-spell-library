@@ -37,7 +37,6 @@ public class SpellCooldownManager {
 
             while (iterator.hasNext()) {
                 java.util.Map.Entry<SpellDef<?>, SpellCooldownManager.Entry> entry = iterator.next();
-                TheSpellLibrary.LOGGER.info("cooling down");
                 if (entry.getValue().endTick <= this.tick) {
                     iterator.remove();
                     this.onCooldownUpdate(entry.getKey());

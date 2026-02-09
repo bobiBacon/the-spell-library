@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-public class RenderUtil {
+public class RenderUtils {
     public static void render2dItemLike(MatrixStack matrices, VertexConsumerProvider consumers, int red, int green, int blue, int overlay, Identifier texture){
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         MatrixStack.Entry entry = matrices.peek();
@@ -56,5 +56,14 @@ public class RenderUtil {
                 .light(light)
                 .normal(normal, 0, 0, 1)
                 .next();
+    }
+    public static int getRedFromHexa(int hexadecimal){
+        return  (hexadecimal >> 16) & 0xFF;
+    }
+    public static int getGreenFromHexa(int hexadecimal){
+        return (hexadecimal >> 8) & 0xFF;
+    }
+    public static int getBlueFromHexa(int hexadecimal){
+        return hexadecimal & 0xFF;
     }
 }

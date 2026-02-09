@@ -1,8 +1,8 @@
 package net.bobbacon.render.item;
 
-import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.item.ScrollItem;
-import net.bobbacon.render.RenderUtil;
+import net.bobbacon.render.LayeredTintedTexture;
+import net.bobbacon.render.RenderUtils;
 import net.bobbacon.spell.SpellDef;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -15,7 +15,6 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix3f;
@@ -35,27 +34,30 @@ public class ScrollItemRenderer {
         int red=255;
         int green= 255;
         int blue= 255;
-        if (spell.usesTintedTexture()){
-            texture= spell.symbolTextureTinted2dBase();
-            red= getRedFromHexa(spell.primaryColor);
-            green= getGreenFromHexa(spell.primaryColor);
-            blue= getBlueFromHexa(spell.primaryColor);
-        }else {
-            texture= spell.symbolTextureFor2d();
-        }
-
-
         matrices.push();
 
         matrices.translate(0f, 0f, 1);
         matrices.multiply(RotationAxis.NEGATIVE_Z.rotationDegrees(90),0,0,1);
+        if (spell.usesTintedTexture()){
+            LayeredTintedTexture layeredTintedTexture= constructTexture(spell);
+            for (int i = 0; i < layeredTintedTexture.length(); i++) {
+                RenderUtils.render2dItemLike(matrices,consumers,layeredTintedTexture.getRed(i),layeredTintedTexture.getGreen(i),layeredTintedTexture.getBlue(i),overlay,layeredTintedTexture.getLayerPath(i));
+            }
+        }else {
+            texture= spell.symbolTextureFor2d();
+            RenderUtils.render2dItemLike(matrices,consumers,red,green,blue,overlay,texture);
+        }
 
-        RenderUtil.render2dItemLike(matrices,consumers,red,green,blue,overlay,texture);
+
+
+
 
 
         matrices.pop();
     }
-
+    protected static LayeredTintedTexture constructTexture(SpellDef<?> spellDef){
+        return new LayeredTintedTexture(spellDef.symbolTextureTinted2dBase(),spellDef.getTints());
+    }
     public static void renderSymbol(
             ItemStack stack,
             MatrixStack matrices,
@@ -136,13 +138,5 @@ public class ScrollItemRenderer {
 
         matrices.pop();
     }
-    public static int getRedFromHexa(int hexadecimal){
-        return  (hexadecimal >> 16) & 0xFF;
-    }
-    public static int getGreenFromHexa(int hexadecimal){
-        return (hexadecimal >> 8) & 0xFF;
-    }
-    public static int getBlueFromHexa(int hexadecimal){
-        return hexadecimal & 0xFF;
-    }
+
 }

@@ -15,6 +15,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.StringIdentifiable;
@@ -52,10 +53,10 @@ public class Decryptor extends BlockEntity {
     }
 
     public static void tick(World world, BlockPos blockPos, BlockState state, Decryptor decryptor) {
-        if (decryptor.state==State.DECRYPTING&&world.getTimeOfDay()%60==0){
+        if (decryptor.isDecrypting()&&world.getTimeOfDay()%60==0){
             Random random= new Random();
             if (random.nextFloat()>=0.66){
-                      decryptor.startTransition();
+                decryptor.startTransition(state);
             }
         }
         if (decryptor.isInEndAnimation()){
@@ -65,12 +66,14 @@ public class Decryptor extends BlockEntity {
             }
         }
     }
+
     public void decrypt(BlockState state){
-        this.setState(State.IDLE_DECRYPTED);
+        this.setState(State.IDLE_DECRYPTED,state);
         this.markDirtyAndSync();
     }
-    public void setState(State state){
+    public void setState(State state,BlockState blockState){
         this.state= state;
+        world.setBlockState(pos, blockState.with(Properties.LIT,isDecrypting()||isInEndAnimation()), Block.NOTIFY_ALL);
         this.markDirtyAndSync();
     }
 
@@ -82,7 +85,7 @@ public class Decryptor extends BlockEntity {
         super.readNbt(nbt);
         Inventories.readNbt(nbt,items);
         int stateInt= nbt.getInt(STATE_KEY);
-        setState(State.fromInt(stateInt));
+        state=State.fromInt(stateInt);
     }
 
     @Override
@@ -98,7 +101,7 @@ public class Decryptor extends BlockEntity {
         ItemStack stack= this.getStack();
         if (stack.isEmpty()&&playerStack.isOf(ModItems.SCROLL)){
             this.setStack(playerStack.split(1));
-            startDecrypting();
+            startDecrypting(state);
             markDirtyAndSync();
             return ActionResult.SUCCESS;
         } else if (playerStack.isEmpty() || ItemStack.canCombine(playerStack, stack)) {
@@ -106,7 +109,7 @@ public class Decryptor extends BlockEntity {
             player.giveItemStack(stack);
             stack.decrement(1);
             setStack(stack);
-            setState(State.IDLE);
+            setState(State.IDLE,state);
             markDirtyAndSync();
             return ActionResult.SUCCESS;
         }
@@ -116,18 +119,18 @@ public class Decryptor extends BlockEntity {
     public boolean isDecrypting(){
         return state==State.DECRYPTING;
     }
-    public boolean startDecrypting(){
+    public boolean startDecrypting(BlockState blockState){
         boolean isDecrypting=items.get(0).isOf(ModItems.SCROLL);
 
         if (isDecrypting){
-            setState(State.DECRYPTING);
+            setState(State.DECRYPTING,blockState);
             endProgress=0f;
             markDirtyAndSync();
         }
         return isDecrypting;
     }
-    public void startTransition(){
-        setState(State.TRANSITION);
+    public void startTransition(BlockState blockState){
+        setState(State.TRANSITION,blockState);
         markDirtyAndSync();
     }
     public float endAnimationProgress(){

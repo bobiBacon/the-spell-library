@@ -1,11 +1,15 @@
 package net.bobbacon.spell;
 
 import net.bobbacon.TheSpellLibrary;
+import net.bobbacon.sound.ModSounds;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //defines properties of a spell
 public class  SpellDef<T extends Spell> {
@@ -15,11 +19,13 @@ public class  SpellDef<T extends Spell> {
     public boolean isSingleUse= true;
     public Identifier customTextureId= null;
     public int cooldown= 0;
+    public int castTime = 20;
     public float manaCost=0;
-    public int primaryColor=0;
-    public int secondaryColor=0;
-    public Identifier tintedTexture2dId = null;
+    Identifier tintedTexture2d = null;
+    final ArrayList<Integer> tints= new ArrayList<>();
     private final Spell template;
+    public SoundEvent castingSound= ModSounds.DEFAULT_CASTING;
+    public SoundEvent releasingSound=ModSounds.DEFAULT_RELEASING;
 
     public SpellDef(Spell template, float manaCost) {
         this.manaCost= manaCost;
@@ -33,13 +39,12 @@ public class  SpellDef<T extends Spell> {
         customTextureId= path;
         return this;
     }
-    public SpellDef<? extends Spell> useTinted2dSymbol(int primaryColor, int secondaryColor){
-        return useTinted2dSymbol(primaryColor,secondaryColor,new Identifier(TheSpellLibrary.MOD_ID,"item/spell/tintable_simple"));
+    public SpellDef<? extends Spell> useTinted2dSymbol(Integer... tints){
+        return useTinted2dSymbol(new Identifier(TheSpellLibrary.MOD_ID,"item/spell/tintable_simple"),tints);
     }
-    public SpellDef<? extends Spell> useTinted2dSymbol(int primaryColor, int secondaryColor,Identifier texturePath){
-        this.primaryColor= primaryColor;
-        this.secondaryColor= secondaryColor;
-        this.tintedTexture2dId = texturePath;
+    public SpellDef<? extends Spell> useTinted2dSymbol(Identifier texturePath, Integer... tints){
+        tintedTexture2d = texturePath;
+        this.tints.addAll(List.of(tints));
         return this;
     }
     public SpellDef<? extends Spell> setCooldown(int cooldown){
@@ -51,12 +56,18 @@ public class  SpellDef<T extends Spell> {
         this.manaCost=amount;
         return this;
     }
+    public SpellDef<? extends Spell> setCastTime(int castTime){
+        this.castTime =castTime;
+        return this;
+    }
+    public SpellDef<? extends Spell> setSound(SoundEvent castingSound, SoundEvent releasingSound){
+        this.castingSound= castingSound;
+        this.releasingSound= releasingSound;
+        return this;
+    }
 
     public Spell newSpell(World world, LivingEntity user){
         return template.createFromTemplate(this,world,user);
-    }
-    public void cast(BlockPos pos){
-
     }
     public Identifier getId(){
         return SpellRegistry.SPELL_TYPES.getId(this);
@@ -76,11 +87,13 @@ public class  SpellDef<T extends Spell> {
         return Identifier.of(nameSpace,path);
     }
     public Identifier symbolTextureTinted2dBase(){
-        return new Identifier(tintedTexture2dId.getNamespace(), tintedTexture2dId.getPath()+"_base");
+        return tintedTexture2d;
     }
-    public Identifier symbolTextureTinted2dOverlay(){
-        return new Identifier(tintedTexture2dId.getNamespace(), tintedTexture2dId.getPath()+"_overlay");
+
+    public ArrayList<Integer> getTints() {
+        return tints;
     }
+
     /**
      * Returns id of this SpellType's texture or {{null}} if spell is empty or not registered.
      * This texture is located at mod_id/textures/item/spell/spell_id
@@ -116,10 +129,13 @@ public class  SpellDef<T extends Spell> {
         return Identifier.of(base.getNamespace(),base.getPath()+"_simple");
     }
     public boolean usesTintedTexture(){
-        return primaryColor!=0 && secondaryColor!=0;
+        return tintedTexture2d!=null && !tints.isEmpty();
     }
     public boolean isEmpty(){
         return this.getId() == SpellDefs.EMPTY.getId();
     }
 
+    public int getCastTime() {
+        return castTime;
+    }
 }

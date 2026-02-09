@@ -1,0 +1,22 @@
+{
+  "spell.casting.default": {
+    "subtitle": "spell.casting.default",
+    "sounds": ["the-spell-library:spell_casting_default"]
+  },
+  "spell.releasing.default": {
+    "subtitle": "spell.releasing.default",
+    "sounds": ["the-spell-library:spell_releasing_default"]
+  },
+  "spell.releasing.fireball": {
+    "subtitle": "spell.releasing.fireball",
+    "sounds": ["the-spell-library:fireball_releasing"]
+  },
+  "spell.casting.fireball": {
+    "subtitle": "spell.casting.fireball",
+    "sounds": ["the-spell-library:fireball_casting"]
+  },
+  "block.decryptor": {
+    "subtitle": "block.decryptor",
+    "sounds": ["the-spell-library:decryptor"]
+  }
+}

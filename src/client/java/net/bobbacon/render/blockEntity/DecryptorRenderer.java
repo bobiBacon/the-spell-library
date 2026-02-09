@@ -58,7 +58,7 @@ public class DecryptorRenderer implements BlockEntityRenderer<Decryptor> {
                 entity.getPos().up()
         );
         matrices.push();
-        BlockState state= entity.getWorld().getBlockState(entity.getPos());
+        BlockState state= entity.getCachedState();
         int rotation = switch (state.get(Properties.HORIZONTAL_FACING)){
             case WEST -> 270;
             case EAST -> 90;
