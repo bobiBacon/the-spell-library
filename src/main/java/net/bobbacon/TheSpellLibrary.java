@@ -73,20 +73,45 @@ public class TheSpellLibrary implements ModInitializer {
                 try {
                     poolBuilder = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(1f))
+                            .conditionally(RandomChanceLootCondition.builder(2f/3f))
                             .with(ItemEntry.builder(ModItems.SCROLL))
                             .apply(RandomSpellLootFunction.builder(Predicates.isClericLoot));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
 
-//				for (SpellDef<?> spellDef: SpellDefs.getAllDefaultLootTableSpells()){
-//					ItemStack scroll= ModItems.SCROLL.getDefaultStack();
-//					ScrollItem.setSpell(scroll,spellDef);
-//					poolBuilder= poolBuilder.with(SetSpellFunction.builder(spellDef));
-//				}
 
 
+				tableBuilder.pool(poolBuilder);
+			}
+			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
+				LOGGER.info("modify loot 3");
+
+				LootPool.Builder poolBuilder = null;
+				try {
+					poolBuilder = LootPool.builder()
+							.rolls(ConstantLootNumberProvider.create(1))
+							.conditionally(RandomChanceLootCondition.builder(1f/2f))
+							.with(ItemEntry.builder(ModItems.SCROLL))
+							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+				tableBuilder.pool(poolBuilder);
+			}
+			if (id.getPath().contains("chests")) {
+				LOGGER.info("modify loot 4");
+
+				LootPool.Builder poolBuilder = null;
+				try {
+					poolBuilder = LootPool.builder()
+							.rolls(ConstantLootNumberProvider.create(1))
+							.conditionally(RandomChanceLootCondition.builder(1f/4f))
+							.with(ItemEntry.builder(ModItems.SCROLL))
+							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 				tableBuilder.pool(poolBuilder);
 			}
 		});

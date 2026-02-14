@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSyntaxException;
 import net.bobbacon.item.ScrollItem;
+import net.bobbacon.spell.Spell;
 import net.bobbacon.spell.SpellDef;
 import net.bobbacon.spell.SpellDefs;
 import net.bobbacon.spell.SpellRegistry;
@@ -19,9 +20,11 @@ import net.minecraft.loot.function.LootFunction;
 import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import net.minecraft.util.Rarity;
 import net.minecraft.village.VillagerProfession;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,6 +34,9 @@ public class RandomSpellLootFunction extends ConditionalLootFunction {
 
     protected RandomSpellLootFunction(LootCondition[] conditions, Predicate<LootContext> predicate) {
         super(conditions);
+        if (predicate==null){
+            predicate=Predicates.AlwaysTrueLoot;
+        }
         this.predicate = predicate;
     }
 
@@ -43,11 +49,14 @@ public class RandomSpellLootFunction extends ConditionalLootFunction {
         List<SpellDef<?>> spells = SpellDefs.getAllDefaultLootTableSpells();
 
         if (spells.isEmpty()) return stack;
+        spells.sort(Comparator.comparing(e -> e.rarity));
+        float raritySelector= context.getRandom().nextFloat();
+        int index= (int) Math.floor(2.2*Math.pow(raritySelector+0.1f,6));
+        List<SpellDef<?>> pool= SpellDef.getSpellsByRarity(Rarity.values()[index],spells);
 
-        SpellDef<?> spell = spells.get(
-                context.getRandom().nextInt(spells.size())
+        SpellDef<?> spell = pool.get(
+                context.getRandom().nextInt(pool.size())
         );
-
         ScrollItem.setSpell(stack, spell);
 
         return stack;
@@ -68,8 +77,8 @@ public class RandomSpellLootFunction extends ConditionalLootFunction {
         }
 
         public RandomSpellLootFunction fromJson(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext, LootCondition[] lootConditions) {
-            String string = JsonHelper.getString(jsonObject, "predicate");
-            Predicate<?> predicate = Predicates.PREDICATES
+            String string = JsonHelper.getString(jsonObject, "predicate",null);
+            Predicate<?> predicate = string==null? Predicates.AlwaysTrueLoot:Predicates.PREDICATES
                     .getOrEmpty(Identifier.tryParse(string))
                     .orElseThrow(() -> new JsonSyntaxException("Unknown condition '" + string + "'"));
 

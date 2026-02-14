@@ -31,6 +31,7 @@ public class Predicates {
         return villager.getVillagerData().getProfession() == VillagerProfession.CLERIC;
 
     }));
+    public static final Predicate<LootContext> AlwaysTrueLoot= Registry.register(PREDICATES,Identifier.of(TheSpellLibrary.MOD_ID,"true_loot"),(lootContext -> true));
     public static void init(){
 
     }

@@ -5,6 +5,7 @@ import net.bobbacon.sound.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public class  SpellDef<T extends Spell> {
     public SoundEvent castingSound= ModSounds.DEFAULT_CASTING;
     public SoundEvent releasingSound=ModSounds.DEFAULT_RELEASING;
     public boolean usesDefaultLootTable= true;
+    public Rarity rarity= Rarity.COMMON;
 
     public SpellDef(Spell template, float manaCost) {
         this.manaCost= manaCost;
@@ -63,6 +65,10 @@ public class  SpellDef<T extends Spell> {
     }
     public SpellDef<? extends Spell> setCastTime(int castTime){
         this.castTime =castTime;
+        return this;
+    }
+    public SpellDef<? extends Spell> setRarity(Rarity rarity){
+        this.rarity =rarity;
         return this;
     }
     public SpellDef<? extends Spell> setSound(SoundEvent castingSound, SoundEvent releasingSound){
@@ -142,5 +148,10 @@ public class  SpellDef<T extends Spell> {
 
     public int getCastTime() {
         return castTime;
+    }
+    public static  List<SpellDef<?>> getSpellsByRarity(Rarity rarity, List<SpellDef<?>> spellDefs) {
+        return spellDefs.stream()
+                .filter(spell -> spell.rarity == rarity)
+                .toList();
     }
 }

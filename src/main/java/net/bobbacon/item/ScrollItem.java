@@ -13,10 +13,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -141,5 +138,10 @@ public class ScrollItem extends Item {
     public int getMaxUseTime(ItemStack stack) {
         SpellDef<?> spell= getSpell(stack);
         return spell.getCastTime();
+    }
+
+    @Override
+    public Rarity getRarity(ItemStack stack) {
+        return getSpell(stack).rarity;
     }
 }
