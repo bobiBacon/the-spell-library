@@ -53,9 +53,9 @@ public class Decryptor extends BlockEntity {
     }
 
     public static void tick(World world, BlockPos blockPos, BlockState state, Decryptor decryptor) {
-        if (decryptor.isDecrypting()&&world.getTimeOfDay()%60==0){
+        if (decryptor.isDecrypting()&&world.getTimeOfDay()%600==0){
             Random random= new Random();
-            if (random.nextFloat()>=0.66){
+            if (random.nextFloat()>=0.66f){
                 decryptor.startTransition(state);
             }
         }

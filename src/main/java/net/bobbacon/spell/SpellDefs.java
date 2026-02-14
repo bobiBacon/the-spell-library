@@ -7,6 +7,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
+import java.util.List;
+
 public class SpellDefs {
     private static final RegistryHelper<SpellDef<?>> registryHelper= new RegistryHelper<>(SpellRegistry.SPELL_TYPES, TheSpellLibrary.MOD_ID);
 
@@ -16,6 +18,11 @@ public class SpellDefs {
     public static final SpellDef<?> Sheeeeep= registryHelper.register("sheeeeep",new SpellDef<>(new ProjectileShootingSpell(EntityType.SHEEP),10).setCooldown(20).useTinted2dSymbol(0xFFEEEE));
     public static final SpellDef<?> EMPTY= registryHelper.register("empty",new SpellDef<>(new Spell(),0));
     public static void init(){
+    }
+    public static List<SpellDef<?>> getAllDefaultLootTableSpells(){
+        List<SpellDef<?>> spellDefs = new java.util.ArrayList<>(SpellRegistry.SPELL_TYPES.stream().toList());
+        spellDefs.removeIf(spellDef -> !spellDef.usesDefaultLootTable);
+        return spellDefs;
     }
 
 }

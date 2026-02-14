@@ -23,7 +23,7 @@ public class Spell {
         this.world = world;
         this.user = user;
     }
-    Spell() {
+    protected Spell() {
         this.type = null;
         world=null;
         user=null;

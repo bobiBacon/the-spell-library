@@ -26,6 +26,7 @@ public class  SpellDef<T extends Spell> {
     private final Spell template;
     public SoundEvent castingSound= ModSounds.DEFAULT_CASTING;
     public SoundEvent releasingSound=ModSounds.DEFAULT_RELEASING;
+    public boolean usesDefaultLootTable= true;
 
     public SpellDef(Spell template, float manaCost) {
         this.manaCost= manaCost;
@@ -33,6 +34,10 @@ public class  SpellDef<T extends Spell> {
     }
     public SpellDef<? extends Spell> hideInCreativeTab(){
         creativeTab=false;
+        return this;
+    }
+    public SpellDef<? extends Spell> notInDefaultLootTable(){
+        usesDefaultLootTable=false;
         return this;
     }
     public SpellDef<? extends Spell> customSymbolPath(Identifier path){
