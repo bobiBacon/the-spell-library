@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class Decryptor extends BlockEntity {
+public class Decryptor extends BlockEntity implements Inventory {
 
 
     protected DefaultedList<ItemStack> items= DefaultedList.ofSize(1,ItemStack.EMPTY);
@@ -172,6 +173,49 @@ public class Decryptor extends BlockEntity {
     public void setWorld(World world) {
         super.setWorld(world);
     }
+
+    @Override
+    public int size() {
+        return items.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return items.get(slot);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot, int amount) {
+        ItemStack stack=items.get(slot);
+        stack.decrement(amount);
+        return items.set(slot,stack);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        return items.remove(slot);
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        items.set(slot,stack);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return true;
+    }
+
+    @Override
+    public void clear() {
+        items.clear();
+    }
+
 
     public enum State{
         IDLE_DECRYPTED(1),

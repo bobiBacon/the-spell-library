@@ -3,9 +3,9 @@
 	"id": "the-spell-library",
 	"version": "${version}",
 	"name": "The Spell Library",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A code-driven library that provides developer-friendly utilities. It serves as a solid foundation for creating highly customizable spells and rituals.",
 	"authors": [
-		"Me!"
+		"bob_bacon"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -36,6 +36,7 @@
 		"fabricloader": ">=0.16.14",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"registry-helper-lib": "*"
 	}
 }

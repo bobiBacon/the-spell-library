@@ -31,7 +31,6 @@ public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
 
 		@Override
 		public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-			blockStateModelGenerator.registerSimpleState(ModBlocks.DECRYPTOR);
 		}
 
 		@Override
