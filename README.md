@@ -1,4 +1,4 @@
-This library provides useful tools to develop spells and rituals, with an integrated mana and scroll system. **This mod is currently in alpha**
+This library provides useful tools to develop spells and rituals, with an integrated mana and scroll system. **This mod is currently in alpha**.
 
 ## Currently Provided
 
