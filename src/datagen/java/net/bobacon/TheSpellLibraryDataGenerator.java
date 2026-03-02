@@ -1,20 +1,19 @@
-package net.bobbacon;
+package net.bobacon;
 
 import net.bobbacon.block.ModBlocks;
 import net.bobbacon.item.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
-import net.minecraft.data.client.Models;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
-
 import java.util.function.Consumer;
 
 public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
@@ -23,6 +22,7 @@ public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(ModModelGenerator::new);
 		pack.addProvider(ModRecipeGenerator::new);
+		pack.addProvider(ModLootGenerator::new);
 	}
 	public static class ModModelGenerator extends FabricModelProvider {
 		public ModModelGenerator(FabricDataOutput output) {
@@ -51,5 +51,20 @@ public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
 							FabricRecipeProvider.conditionsFromItem(ModItems.SCROLL))
 					.offerTo(consumer);
 		}
+	}
+	public static class ModLootGenerator extends FabricBlockLootTableProvider {
+
+
+		protected ModLootGenerator(FabricDataOutput dataOutput) {
+			super(dataOutput);
+		}
+
+
+		@Override
+		public void generate() {
+			addDrop(ModBlocks.DECRYPTOR);
+		}
+
+
 	}
 }

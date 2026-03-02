@@ -28,5 +28,9 @@ public class ModItems {
                         }
                     }
                 });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
+                .register(entries -> {
+                    entries.add(DECRYPTOR);
+                });
     }
 }

@@ -15,11 +15,8 @@
 	"icon": "assets/the-spell-library/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"net.bobbacon.TheSpellLibrary"
-		],
-		"client": [
-			"net.bobbacon.TheSpellLibraryClient"
+		"fabric-datagen": [
+			"net.bobbacon.TheSpellLibraryDataGenerator"
 		]
 	},
 	"mixins": [

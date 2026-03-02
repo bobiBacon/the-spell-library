@@ -24,6 +24,15 @@ repositories {
 		}
 	}
 }
+sourceSets {
+	datagen {
+		java.srcDirs = ['src/datagen/java']
+		resources.srcDirs = ['src/datagen/resources']
+
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
 
 loom {
 	splitEnvironmentSourceSets()
@@ -38,6 +47,11 @@ loom {
 	runs {
 		client {
 			programArgs(["--username", "bobi_bacon", "--uuid", "a375f567-9bee-4ec3-bab0-7a5816af964e"])
+		}
+		datagen {
+			client()
+			name "Data Generation"
+			source sourceSets.datagen
 		}
 	}
 }
@@ -84,6 +98,7 @@ java {
 }
 
 jar {
+	exclude("**/datagen/**")
 	inputs.property "archivesName", project.base.archivesName
 
 	from("LICENSE") {

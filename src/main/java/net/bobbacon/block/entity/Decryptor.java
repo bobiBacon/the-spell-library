@@ -54,7 +54,11 @@ public class Decryptor extends BlockEntity implements Inventory {
     }
 
     public static void tick(World world, BlockPos blockPos, BlockState state, Decryptor decryptor) {
+
         if (decryptor.isDecrypting()&&world.getTimeOfDay()%600==0){
+            if (world.isClient){
+                return;
+            }
             Random random= new Random();
             if (random.nextFloat()>=0.66f){
                 decryptor.startTransition(state);
@@ -106,7 +110,9 @@ public class Decryptor extends BlockEntity implements Inventory {
             markDirtyAndSync();
             return ActionResult.SUCCESS;
         } else if (playerStack.isEmpty() || ItemStack.canCombine(playerStack, stack)) {
-            ScrollItem.decrypt(player,stack);
+            if (isDecrypted()){
+                ScrollItem.decrypt(player,stack);
+            }
             player.giveItemStack(stack);
             stack.decrement(1);
             setStack(stack);
