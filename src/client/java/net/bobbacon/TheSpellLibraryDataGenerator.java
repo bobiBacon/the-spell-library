@@ -1,4 +1,4 @@
-package net.bobacon;
+package net.bobbacon;
 
 import net.bobbacon.block.ModBlocks;
 import net.bobbacon.item.ModItems;

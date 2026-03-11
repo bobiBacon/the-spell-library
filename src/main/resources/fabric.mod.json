@@ -20,8 +20,9 @@
 		],
 		"client": [
 			"net.bobbacon.TheSpellLibraryClient"
-		]
-	},
+		]		${datagenEntrypoint}
+
+},
 	"mixins": [
 		"the-spell-library.mixins.json",
 		{

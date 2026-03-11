@@ -6,6 +6,9 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+
+
+
 base {
 	archivesName = project.archives_base_name
 }
@@ -48,11 +51,7 @@ loom {
 		client {
 			programArgs(["--username", "bobi_bacon", "--uuid", "a375f567-9bee-4ec3-bab0-7a5816af964e"])
 		}
-		datagen {
-			client()
-			name "Data Generation"
-			source sourceSets.datagen
-		}
+
 	}
 }
 
@@ -62,6 +61,9 @@ fabricApi {
 	}
 }
 
+configurations {
+	datagenImplementation.extendsFrom modImplementation
+}
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -74,12 +76,22 @@ dependencies {
 	modImplementation("maven.modrinth:registry-helper-lib:${project.registry_version}")
 
 }
-
 processResources {
+	def isDatagen= !gradle.startParameter.taskNames.getFirst().equals("assemble")
+	
+	def datagenEntrypoint = isDatagen ? """,
+    "fabric-datagen": [
+      "net.bobbacon.TheSpellLibraryDataGenerator"
+    ]""" : ""
 	inputs.property "version", project.version
+	inputs.property "datagenEntrypoint", datagenEntrypoint
 
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand(
+				"version": inputs.properties.version,
+				"datagenEntrypoint": datagenEntrypoint
+		)
+
 	}
 }
 
