@@ -3,11 +3,11 @@ package net.bobbacon.spell;
 
 import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
+import net.bobbacon.Accessors.WorldAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,12 +16,14 @@ public class Spell {
     public final SpellDef<? extends Spell> type;
     public final World world;
     public final LivingEntity user;
+    public int age=0;
 
 
     protected Spell(SpellDef<? extends Spell> type, World world, LivingEntity user, Spell Template) {
         this.type = type;
         this.world = world;
         this.user = user;
+
     }
     protected Spell() {
         this.type = null;
@@ -42,6 +44,10 @@ public class Spell {
     protected void cast(BlockPos pos){
         consumeMana();
         playReleasingSound(pos);
+        if (!world.isClient&&this instanceof TickedSpell spell){
+            WorldAccessor serverWorld= (WorldAccessor) (Object)world;
+            serverWorld.getSpellTickingManager().addSpell(spell);
+        }
     }
     public void consumeMana(){
         if (user instanceof PlayerEntity player&&!player.isCreative()){

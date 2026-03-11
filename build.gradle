@@ -78,7 +78,7 @@ dependencies {
 }
 processResources {
 	def isDatagen= !gradle.startParameter.taskNames.getFirst().equals("assemble")
-	
+
 	def datagenEntrypoint = isDatagen ? """,
     "fabric-datagen": [
       "net.bobbacon.TheSpellLibraryDataGenerator"

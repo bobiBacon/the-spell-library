@@ -18,7 +18,7 @@ public class SpellDefs {
     public static final SpellDef<?> FireBall= registryHelper.register("fire_ball",new SpellDef<>(new ProjectileShootingSpell(EntityType.FIREBALL),20)
             .setCooldown(60).customSymbolPath(new Identifier("minecraft","item/fire_charge")).useTinted2dSymbol(0xFF3010).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING));
     public static final SpellDef<?> BigFireBall= registryHelper.register("big_fire_ball",new SpellDef<>(new BigFireBallSpell(),60)
-            .customSymbolPath(new Identifier("minecraft","item/fire_charge")).useTinted2dSymbol(0xFF3010).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING).setCastTime(80).setRarity(Rarity.RARE));
+            .customSymbolPath(new Identifier("minecraft","item/fire_charge")).useTinted2dSymbol(0xFF3010).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING).setCastTime(40).setRarity(Rarity.RARE));
     public static final SpellDef<?> Sheeeeep= registryHelper.register("sheeeeep",new SpellDef<>(new ProjectileShootingSpell(EntityType.SHEEP),10).setCooldown(20).useTinted2dSymbol(0xFFEEEE).setRarity(Rarity.UNCOMMON));
     public static final SpellDef<?> EMPTY= registryHelper.register("empty",new SpellDef<>(new Spell(),0).notInDefaultLootTable());
     public static void init(){
