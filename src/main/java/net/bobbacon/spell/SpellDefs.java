@@ -4,6 +4,8 @@ import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.api.RegistryHelper;
 import net.bobbacon.sound.ModSounds;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -17,6 +19,8 @@ public class SpellDefs {
     public static final SpellDef<?> Example= Registry.register(SpellRegistry.SPELL_TYPES,new Identifier(TheSpellLibrary.MOD_ID,"example"),new SpellDef<>(new ExampleSpell(),20).setCooldown(60).useTinted2dSymbol(0x50FF50).setRarity(Rarity.EPIC));
     public static final SpellDef<?> FireBall= registryHelper.register("fire_ball",new SpellDef<>(new ProjectileShootingSpell(EntityType.FIREBALL),20)
             .setCooldown(60).customSymbolPath(new Identifier("minecraft","item/fire_charge")).useTinted2dSymbol(0xFF3010).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING));
+    public static final SpellDef<?> FlameBlast= registryHelper.register("flame_blast",new SpellDef<>(new InstantDamageSpell(15,5, DamageTypes.IN_FIRE, ParticleTypes.FLAME),20)
+            .setCooldown(60).customSymbolPath(new Identifier("minecraft","item/blaze_powder")).useTinted2dSymbol(0x663090).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING));
     public static final SpellDef<?> BigFireBall= registryHelper.register("big_fire_ball",new SpellDef<>(new BigFireBallSpell(),60)
             .customSymbolPath(new Identifier("minecraft","item/fire_charge")).useTinted2dSymbol(0xFF3010).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING).setCastTime(40).setRarity(Rarity.RARE));
     public static final SpellDef<?> Sheeeeep= registryHelper.register("sheeeeep",new SpellDef<>(new ProjectileShootingSpell(EntityType.SHEEP),10).setCooldown(20).useTinted2dSymbol(0xFFEEEE).setRarity(Rarity.UNCOMMON));

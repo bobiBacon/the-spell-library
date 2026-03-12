@@ -92,8 +92,8 @@ public class ScrollItem extends Item {
 
         Identifier id = Identifier.tryParse(nbt.getString(SPELL_KEY));
         if (id == null) return  SpellDefs.EMPTY;
-
-        return SpellRegistry.SPELL_TYPES.get(id);
+        SpellDef<?> spellDef=SpellRegistry.SPELL_TYPES.get(id);
+        return spellDef!=null?spellDef:SpellDefs.EMPTY;
     }
     public static void setSpell(ItemStack stack, SpellDef<?> spell) {
         Identifier id= SpellRegistry.SPELL_TYPES.getId(spell);

@@ -93,5 +93,12 @@ public class Spell {
             world.playSound(null,pos, soundEvent, user instanceof PlayerEntity? SoundCategory.PLAYERS:SoundCategory.HOSTILE,world.random.nextFloat()*0.4f+0.5f,0.6f+world.random.nextFloat()*0.8f);
         }
     }
-
+    public void fail(BlockPos pos){
+        consumeMana(0.5f);
+    }
+    public void consumeMana(float modifier){
+        if (user instanceof PlayerEntity player&&!player.isCreative()){
+            ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost*modifier);
+        }
+    }
 }
