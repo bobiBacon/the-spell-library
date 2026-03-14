@@ -14,6 +14,11 @@ public class SpellRegistry {
     public static final SimpleRegistry<SpellDef<?>> SPELL_TYPES = FabricRegistryBuilder.createSimple(SPELL_REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
+    private static final RegistryKey<Registry<SpellSchool>> SCHOOL_REGISTRY_KEY =
+            RegistryKey.ofRegistry(new Identifier(TheSpellLibrary.MOD_ID, "school"));
+    public static final SimpleRegistry<SpellSchool> SPELL_SCHOOL = FabricRegistryBuilder.createSimple(SCHOOL_REGISTRY_KEY)
+            .attribute(RegistryAttribute.SYNCED)
+            .buildAndRegister();
     public static void init(){
 
     }

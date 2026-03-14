@@ -30,12 +30,19 @@ public class  SpellDef<T extends Spell> {
     public SoundEvent releasingSound=ModSounds.DEFAULT_RELEASING;
     public boolean usesDefaultLootTable= true;
     public Rarity rarity= Rarity.COMMON;
+    public final SpellSchool school;
 
-    public SpellDef(Spell template, float manaCost) {
+    public SpellDef(Spell template, SpellSchool school,float manaCost) {
         this.manaCost= manaCost;
         template.initType(this);
         this.template = template;
+        this.school= school;
     }
+
+    public SpellDef(Spell template,float manaCost) {
+        this(template,SpellSchools.Arcanic,manaCost);
+    }
+
     public SpellDef<? extends Spell> hideInCreativeTab(){
         creativeTab=false;
         return this;

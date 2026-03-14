@@ -109,14 +109,18 @@ public class Spell {
             ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost*modifier);
         }
     }
+    public SpellSchool getSchool(){
+        return this.type.school;
+    }
     public List<Text> getTooltips(){
+        Style style= getSchool().style;
         ArrayList<Text> list= new ArrayList<>();
-        list.add(Text.translatable("spell.the-spell-library.tooltip.mana",this.type.manaCost));
-        list.add(Text.translatable("spell.the-spell-library.tooltip.cast_time",this.type.castTime/20.0));
+        list.add(Text.translatable("spell.the-spell-library.tooltip.mana",this.type.manaCost).setStyle(style));
+        list.add(Text.translatable("spell.the-spell-library.tooltip.cast_time",this.type.castTime/20.0).setStyle(style));
         if (this.isSingleUse()){
-            list.add(Text.translatable("spell.the-spell-library.tooltip.single_use").setStyle());
+            list.add(Text.translatable("spell.the-spell-library.tooltip.single_use").setStyle(style));
         }else {
-            list.add(Text.translatable("spell.the-spell-library.tooltip.cooldown",this.type.cooldown/20.0));
+            list.add(Text.translatable("spell.the-spell-library.tooltip.cooldown",this.type.cooldown/20.0).setStyle(style));
         }
         return list;
     }

@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -57,7 +57,7 @@ loom {
 
 fabricApi {
 	configureDataGeneration {
-		client = true
+
 	}
 }
 
@@ -77,7 +77,7 @@ dependencies {
 
 }
 processResources {
-	def isDatagen= !gradle.startParameter.taskNames.getFirst().equals("assemble")
+	def isDatagen= !gradle.startParameter.taskNames.first().equals("assemble")
 
 	def datagenEntrypoint = isDatagen ? """,
     "fabric-datagen": [
