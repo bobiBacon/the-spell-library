@@ -2,6 +2,19 @@
   "item.the-spell-library.scroll": "Unknown Scroll",
   "item.the-spell-library.scroll.blank": "Blank Scroll",
   "item.the-spell-library.scroll.spell.example": "Example Scroll",
+  "item.the-spell-library.scroll.spell.flame_blast": "Flame Blast",
+  "item.the-spell-library.scroll.spell.fire_wave": "Fire Wave",
+  "item.the-spell-library.scroll.spell.blindness": "Blindness",
+  "item.the-spell-library.scroll.spell.fire_ball": "Fire Ball",
+  "item.the-spell-library.scroll.spell.big_fire_ball": "Big Fire Ball",
+  "item.the-spell-library.scroll.spell.sheeeeep": "Sheeeeep",
+  "spell.the-spell-library.tooltip.mana": "Mana: %s",
+  "spell.the-spell-library.tooltip.cast_time": "Cast Time: %s s",
+  "spell.the-spell-library.tooltip.cooldown": "Cooldown: %s s",
+  "spell.the-spell-library.tooltip.single_use": "Single Use",
+  "spell.the-spell-library.tooltip.range": "Range: %s blocks",
+
+
   "spell.the-spell-library.error.not_enough_mana": "Not enough mana"
 
 }

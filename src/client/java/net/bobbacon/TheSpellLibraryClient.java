@@ -27,9 +27,8 @@ public class TheSpellLibraryClient implements ClientModInitializer {
 
             //TODO descriptions
             if (ScrollItem.canRead(client.player,stack)){
-//				tooltip.add(0,Text.translatable("item.night-of-the-dead.scroll.spell."+ModRegistries.SPELL_TYPES.getId(spell).getPath()));
+                tooltip.addAll(spell.newSpell(client.world, client.player).getTooltips());
             } else {
-//				tooltip.add(0,Text.translatable("item.night-of-the-dead.scroll.spell.unknown"));
             }
         });
 

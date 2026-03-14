@@ -5,6 +5,7 @@ import net.bobbacon.spell.SpellRegistry;
 import net.bobbacon.spell.Spell;
 import net.bobbacon.spell.SpellDef;
 import net.bobbacon.spell.SpellDefs;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,9 +14,12 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ScrollItem extends Item {
@@ -69,13 +73,14 @@ public class ScrollItem extends Item {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-
+        Spell spell= getSpell(stack).newSpell(world,user);
+        spell.castingTick(user.getBlockPos(),remainingUseTicks);
         if (remainingUseTicks==0){
             finishUsing(stack,world,user);
             return;
         }
         if (((getMaxUseTime(stack)-remainingUseTicks)&11111)==0){
-            Spell spell= getSpell(stack).newSpell(world,user);
+//            Spell spell= getSpell(stack).newSpell(world,user);
 //            spell.playCastingSound(user.getBlockPos());
         }
     }
@@ -144,4 +149,6 @@ public class ScrollItem extends Item {
     public Rarity getRarity(ItemStack stack) {
         return getSpell(stack).rarity;
     }
+
+
 }

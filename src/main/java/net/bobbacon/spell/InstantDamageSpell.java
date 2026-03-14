@@ -10,23 +10,22 @@ import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class InstantDamageSpell extends TargetingSpell{
     float damage;
-    DefaultParticleType particleType;
     RegistryKey<DamageType> damageType;
     protected InstantDamageSpell(SpellDef<? extends Spell> type, World world, LivingEntity user, InstantDamageSpell template) {
         super(type, world, user, template);
         damage=template.damage;
-        particleType= template.particleType;
         this.damageType= template.damageType;
+
     }
 
     InstantDamageSpell(float range, float damage, RegistryKey<DamageType> damageType, DefaultParticleType particleType) {
-        super(range);
+        super(range,particleType);
         this.damage=damage;
-        this.particleType=particleType;
         this.damageType= damageType;
     }
 
@@ -43,4 +42,5 @@ public class InstantDamageSpell extends TargetingSpell{
             ((ServerWorld)world).spawnParticles(particleType,entity.getX(),entity.getEyeY(),entity.getZ(),15,0,0,0,0.1);
         }
     }
+
 }

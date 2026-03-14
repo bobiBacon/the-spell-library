@@ -1,9 +1,13 @@
 package net.bobbacon.spell;
 
+import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -20,46 +24,43 @@ import java.util.function.Predicate;
 
 public abstract class TargetingSpell extends Spell{
     public float range;
+    DefaultParticleType particleType;
+
     protected TargetingSpell(SpellDef<? extends Spell> type, World world, LivingEntity user, TargetingSpell template) {
         super(type, world, user,template);
         this.range = template.range;
+        this.particleType= template.particleType;
     }
-    TargetingSpell(float range) {
+    TargetingSpell(float range, DefaultParticleType particleType) {
         super();
         this.range = range;
+        this.particleType= particleType;
     }
 
 
 
     @Override
     protected void cast(BlockPos pos) {
+
+
+        EntityHitResult result = targetEntity();
+
+        if (result != null) {
+            apply((LivingEntity) result.getEntity());
+            super.cast(pos);
+        }
+        else {
+            fail(pos);
+        }
+    }
+    public EntityHitResult targetEntity(){
         Vec3d start = user.getCameraPosVec(1.0F);
         Vec3d direction = user.getRotationVec(1.0F);
 
         Vec3d end = start.add(direction.multiply(range));
 
         Box box = user.getBoundingBox().stretch(direction.multiply(range)).expand(1.5);
-
-//        double radius = 1.5;
-//
-//        List<LivingEntity> entities = world.getEntitiesByClass(
-//                LivingEntity.class,
-//                box,
-//                e -> e != user
-//        );
-//
-//        for (LivingEntity entity : entities) {
-//            Vec3d closest = entity.getBoundingBox().getCenter();
-//            double dist = closest.squaredDistanceTo(start);
-//
-//            if (dist < radius * radius) {
-//                apply(entity);
-//                super.cast(pos);
-//                return;
-//            }
-//        }
-//        fail(pos);
-        EntityHitResult result = raycast(
+        return raycastWithLease(
                 user,
                 start,
                 end,
@@ -81,17 +82,9 @@ public abstract class TargetingSpell extends Spell{
                     return entity instanceof LivingEntity&&!entity.isSpectator() && entity.canHit()&&visible;},
                 range * range
         );
-
-        if (result != null) {
-            apply((LivingEntity) result.getEntity());
-            super.cast(pos);
-        }
-        else {
-            fail(pos);
-        }
     }
     @Nullable
-    public static EntityHitResult raycast(Entity entity, Vec3d min, Vec3d max, Box box, Predicate<Entity> predicate, double d) {
+    protected static EntityHitResult raycastWithLease(Entity entity, Vec3d min, Vec3d max, Box box, Predicate<Entity> predicate, double d) {
         World world = entity.getWorld();
         double e = d;
         Entity entity2 = null;
@@ -128,4 +121,25 @@ public abstract class TargetingSpell extends Spell{
     }
 
     protected abstract void apply(LivingEntity entity);
+
+    @Override
+    public void castingTick(BlockPos pos, int remainingTicks) {
+        if ((remainingTicks&111)==0){
+            EntityHitResult hitResult= targetEntity();
+            if (hitResult!=null){
+                Entity entity =hitResult.getEntity();
+//                ((ServerWorld)world).spawnParticles(particleType,entity.getParticleX(1),entity.getRandomBodyY(),entity.getParticleZ(1),8,1,1,1,0);
+                for (int i = 0; i < 8; i++) {
+                    world.addParticle(particleType,entity.getParticleX(1),entity.getRandomBodyY(),entity.getParticleZ(1),entity.getVelocity().getX(),entity.getVelocity().getY(),entity.getVelocity().getZ());
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<Text> getTooltips() {
+        List<Text> list= super.getTooltips();
+        list.add(Text.translatable("spell.the-spell-library.tooltip.range",range));
+        return list;
+    }
 }

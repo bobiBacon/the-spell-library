@@ -4,13 +4,19 @@ package net.bobbacon.spell;
 import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.Accessors.WorldAccessor;
+import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class Spell {
     public final SpellDef<? extends Spell> type;
@@ -19,7 +25,7 @@ public class Spell {
     public int age=0;
 
 
-    protected Spell(SpellDef<? extends Spell> type, World world, LivingEntity user, Spell Template) {
+    protected Spell(SpellDef<? extends Spell> type, World world, LivingEntity user, Spell template) {
         this.type = type;
         this.world = world;
         this.user = user;
@@ -32,6 +38,9 @@ public class Spell {
     }
     public Spell createFromTemplate(SpellDef<? extends Spell> type, World world, LivingEntity user) {
         return new Spell(type,world,user,this);
+    }
+    public final void initType(SpellDef<? extends Spell> type){
+
     }
 
     public boolean casted= false;
@@ -67,8 +76,7 @@ public class Spell {
         }
         return type!= SpellDefs.EMPTY && !((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns().isCoolingDown(type) && hasEnoughMana();
     }
-    public void castingTick(BlockPos pos){
-
+    public void castingTick(BlockPos pos,int remainingTicks){
     }
 
     public boolean isSingleUse(){
@@ -100,5 +108,16 @@ public class Spell {
         if (user instanceof PlayerEntity player&&!player.isCreative()){
             ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost*modifier);
         }
+    }
+    public List<Text> getTooltips(){
+        ArrayList<Text> list= new ArrayList<>();
+        list.add(Text.translatable("spell.the-spell-library.tooltip.mana",this.type.manaCost));
+        list.add(Text.translatable("spell.the-spell-library.tooltip.cast_time",this.type.castTime/20.0));
+        if (this.isSingleUse()){
+            list.add(Text.translatable("spell.the-spell-library.tooltip.single_use").setStyle());
+        }else {
+            list.add(Text.translatable("spell.the-spell-library.tooltip.cooldown",this.type.cooldown/20.0));
+        }
+        return list;
     }
 }

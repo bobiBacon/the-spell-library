@@ -28,7 +28,7 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
 
     @Override
     protected void cast(BlockPos pos) {
-        user.addVelocity(0,2,0);
+        user.addVelocity(0,2.5,0);
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,200,0,false,false));
         if (!world.isClient){
             WorldAccessor serverWorld= (WorldAccessor) (Object)world;

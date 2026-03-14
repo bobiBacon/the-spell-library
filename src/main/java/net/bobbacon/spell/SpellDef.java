@@ -4,6 +4,7 @@ import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.sound.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
@@ -32,6 +33,7 @@ public class  SpellDef<T extends Spell> {
 
     public SpellDef(Spell template, float manaCost) {
         this.manaCost= manaCost;
+        template.initType(this);
         this.template = template;
     }
     public SpellDef<? extends Spell> hideInCreativeTab(){
@@ -153,5 +155,8 @@ public class  SpellDef<T extends Spell> {
         return spellDefs.stream()
                 .filter(spell -> spell.rarity == rarity)
                 .toList();
+    }
+    public List<Text> getTooltips(){
+        return template.getTooltips();
     }
 }
