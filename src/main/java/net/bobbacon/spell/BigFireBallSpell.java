@@ -50,7 +50,7 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
     int angle2=120;
     int angle3=240;
     @Override
-    public void tick() {
+    public boolean tick() {
         angle++;
         angle2++;
         angle3++;
@@ -62,6 +62,7 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
         if (age==60){
             shoot();
         }
+        return false;
     }
 
     @Override
@@ -69,12 +70,5 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
         return 60;
     }
 
-    @Override
-    public void abort() {
-        if (!world.isClient){
-            WorldAccessor serverWorld= (WorldAccessor) (Object)world;
-            serverWorld.getSpellTickingManager().removeSpell(this);
-        }
-    }
 
 }

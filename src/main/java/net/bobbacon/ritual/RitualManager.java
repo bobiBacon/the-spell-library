@@ -67,7 +67,6 @@ public class RitualManager extends PersistentState {
         remove(ritual.id);
     }
     public void remove(UUID id){
-        TheSpellLibrary.LOGGER.info("removing id"+ id);
         Ritual ritual= rituals.get(id);
         if (ritual!=null){
             ritual.started=false;
@@ -102,7 +101,6 @@ public class RitualManager extends PersistentState {
         return ritualManager;
     }
     public void onEntityDeath(LivingEntity entity){
-        TheSpellLibrary.LOGGER.info("manager onEntityDeath");
         UUID id= entityMapping.get(entity.getUuid());
         if (id!=null){
             Ritual ritual=rituals.get(id);

@@ -1,6 +1,7 @@
 package net.bobbacon;
 
 import net.bobbacon.item.ScrollItem;
+import net.bobbacon.particles.ModParticlesClient;
 import net.bobbacon.render.ModRenderLayers;
 import net.bobbacon.render.blockEntity.BlockEntityRenderers;
 import net.bobbacon.spell.SpellDef;
@@ -16,6 +17,7 @@ public class TheSpellLibraryClient implements ClientModInitializer {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
         BlockEntityRenderers.init();
         ModRenderLayers.init();
+        ModParticlesClient.init();
         ItemTooltipCallback.EVENT.register((stack, context, tooltip) -> {
             if (!(stack.getItem() instanceof ScrollItem)) return;
 

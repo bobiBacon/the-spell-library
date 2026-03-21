@@ -11,15 +11,16 @@ public class SpellTickingManager {
         spellsToTick.remove(spell);
     }
     public void tickAll(){
-        spellsToTick.forEach(TickedSpell::tick);
+
         spellsToTick.removeIf(tickedSpell ->{
             try{
                 Spell spell= (Spell) tickedSpell;
                 spell.age++;
+                boolean remove= tickedSpell.tick();
                 if (spell.age> tickedSpell.getMaxTime()||!spell.casted){
                     return true;
                 }
-                return false;
+                return remove;
             }catch (Exception e){
                 return true;
             }

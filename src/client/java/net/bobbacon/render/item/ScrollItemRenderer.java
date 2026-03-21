@@ -1,5 +1,6 @@
 package net.bobbacon.render.item;
 
+import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.item.ScrollItem;
 import net.bobbacon.render.LayeredTintedTexture;
 import net.bobbacon.render.RenderUtils;
@@ -67,6 +68,7 @@ public class ScrollItemRenderer {
             ModelTransformationMode renderMode,
             BakedModel scrollModel
     ) {
+
         MinecraftClient client = MinecraftClient.getInstance();
         SpellDef<?> spell = ScrollItem.getSpell(stack);
         if (spell == null || spell.isEmpty()) return;

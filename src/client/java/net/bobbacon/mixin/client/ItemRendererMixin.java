@@ -1,9 +1,12 @@
 package net.bobbacon.mixin.client;
 
+import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.TheSpellLibraryClient;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.item.ScrollItem;
 import net.bobbacon.render.item.ScrollItemRenderer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -17,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+@Environment(EnvType.CLIENT)
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
     @ModifyVariable(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V",at = @At("HEAD"),argsOnly = true)
@@ -28,7 +31,12 @@ public class ItemRendererMixin {
         }
         return value;
     }
-    @Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V", at = @At("RETURN"))
+    @Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",
+            shift = At.Shift.AFTER
+        )
+    )
     private void renderSymbol(ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, BakedModel model, CallbackInfo ci){
 
         if (stack.isOf(ModItems.SCROLL)&&ScrollItem.canRead(MinecraftClient.getInstance().player,stack)){

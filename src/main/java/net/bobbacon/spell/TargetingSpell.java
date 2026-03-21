@@ -6,8 +6,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -24,14 +28,14 @@ import java.util.function.Predicate;
 
 public abstract class TargetingSpell extends Spell{
     public float range;
-    DefaultParticleType particleType;
+    ParticleEffect particleType;
 
     protected TargetingSpell(SpellDef<? extends Spell> type, World world, LivingEntity user, TargetingSpell template) {
         super(type, world, user,template);
         this.range = template.range;
         this.particleType= template.particleType;
     }
-    TargetingSpell(float range, DefaultParticleType particleType) {
+    TargetingSpell(float range, ParticleEffect particleType) {
         super();
         this.range = range;
         this.particleType= particleType;
@@ -66,20 +70,10 @@ public abstract class TargetingSpell extends Spell{
                 end,
                 box,
                 entity -> {
-                    Vec3d start2 = user.getCameraPosVec(1.0F);
-                    Vec3d end2 = entity.getEyePos();
 
-                    BlockHitResult blockHit = user.getWorld().raycast(new RaycastContext(
-                            start2,
-                            end2,
-                            RaycastContext.ShapeType.COLLIDER,
-                            RaycastContext.FluidHandling.NONE,
-                            user
-                    ));
 
-                    boolean visible = blockHit.getType() == HitResult.Type.MISS;
 
-                    return entity instanceof LivingEntity&&!entity.isSpectator() && entity.canHit()&&visible;},
+                    return entity instanceof LivingEntity&&!entity.isSpectator() && entity.canHit()&&user.canSee(entity);},
                 range * range
         );
     }
@@ -124,11 +118,10 @@ public abstract class TargetingSpell extends Spell{
 
     @Override
     public void castingTick(BlockPos pos, int remainingTicks) {
-        if ((remainingTicks&111)==0){
+        if ((remainingTicks&11)==0){
             EntityHitResult hitResult= targetEntity();
             if (hitResult!=null){
                 Entity entity =hitResult.getEntity();
-//                ((ServerWorld)world).spawnParticles(particleType,entity.getParticleX(1),entity.getRandomBodyY(),entity.getParticleZ(1),8,1,1,1,0);
                 for (int i = 0; i < 8; i++) {
                     world.addParticle(particleType,entity.getParticleX(1),entity.getRandomBodyY(),entity.getParticleZ(1),entity.getVelocity().getX(),entity.getVelocity().getY(),entity.getVelocity().getZ());
                 }
@@ -139,7 +132,7 @@ public abstract class TargetingSpell extends Spell{
     @Override
     public List<Text> getTooltips() {
         List<Text> list= super.getTooltips();
-        list.add(Text.translatable("spell.the-spell-library.tooltip.range",range));
+        list.add(Text.translatable("spell.the-spell-library.tooltip.range",range).setStyle(Style.EMPTY.withColor(Formatting.GOLD)));
         return list;
     }
 }

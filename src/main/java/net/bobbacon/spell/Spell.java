@@ -65,7 +65,7 @@ public class Spell {
     }
     public boolean hasEnoughMana(){
         if (user instanceof PlayerEntity player){
-            return ((PlayerAccessor)player).the_spell_library$getMana()>=type.manaCost;
+            return ((PlayerAccessor)player).the_spell_library$getMana()>=type.manaCost||player.isCreative();
         }
         return true;
     }

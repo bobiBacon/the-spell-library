@@ -10,6 +10,7 @@ import net.bobbacon.loot.ModLoot;
 import net.bobbacon.loot.Predicates;
 import net.bobbacon.loot.RandomSpellLootFunction;
 import net.bobbacon.loot.SetSpellFunction;
+import net.bobbacon.particles.ModParticles;
 import net.bobbacon.ritual.RitualManager;
 import net.bobbacon.sound.ModSounds;
 import net.bobbacon.spell.SpellDef;
@@ -64,16 +65,15 @@ public class TheSpellLibrary implements ModInitializer {
 		ModSounds.init();
 		ModLoot.init();
 		Predicates.init();
-
+		ModParticles.init();
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (id.equals(new Identifier("minecraft", "entities/villager"))) {
-				LOGGER.info("modify loot 2");
 
                 LootPool.Builder poolBuilder = null;
                 try {
                     poolBuilder = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(2f/3f))
+                            .conditionally(RandomChanceLootCondition.builder(1f/7f))
                             .with(ItemEntry.builder(ModItems.SCROLL))
                             .apply(RandomSpellLootFunction.builder(Predicates.isClericLoot));
                 } catch (Exception e) {
@@ -85,13 +85,12 @@ public class TheSpellLibrary implements ModInitializer {
 				tableBuilder.pool(poolBuilder);
 			}
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
-				LOGGER.info("modify loot 3");
 
 				LootPool.Builder poolBuilder = null;
 				try {
 					poolBuilder = LootPool.builder()
 							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceLootCondition.builder(1f/2f))
+							.conditionally(RandomChanceLootCondition.builder(1f/4f))
 							.with(ItemEntry.builder(ModItems.SCROLL))
 							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
 				} catch (Exception e) {
@@ -100,13 +99,12 @@ public class TheSpellLibrary implements ModInitializer {
 				tableBuilder.pool(poolBuilder);
 			}
 			if (id.getPath().contains("chests")) {
-				LOGGER.info("modify loot 4");
 
 				LootPool.Builder poolBuilder = null;
 				try {
 					poolBuilder = LootPool.builder()
 							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceLootCondition.builder(1f/4f))
+							.conditionally(RandomChanceLootCondition.builder(1f/7f))
 							.with(ItemEntry.builder(ModItems.SCROLL))
 							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
 				} catch (Exception e) {

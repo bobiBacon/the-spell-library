@@ -1,7 +1,6 @@
 package net.bobbacon.spell;
 
 public interface TickedSpell {
-    public void tick();
+    public boolean tick();
     public int getMaxTime();
-    public void abort();
 }

@@ -74,7 +74,16 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modImplementation("maven.modrinth:registry-helper-lib:${project.registry_version}")
+	implementation(platform("org.lwjgl:lwjgl-bom:3.3.1"))
 
+}
+configurations.all {
+	resolutionStrategy {
+		force "org.lwjgl:lwjgl:3.3.1"
+		force "org.lwjgl:lwjgl-glfw:3.3.1"
+		force "org.lwjgl:lwjgl-opengl:3.3.1"
+		force "org.lwjgl:lwjgl-stb:3.3.1"
+	}
 }
 processResources {
 	def isDatagen= !gradle.startParameter.taskNames.first().equals("assemble")
