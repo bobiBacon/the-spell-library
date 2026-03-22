@@ -15,15 +15,23 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+
+import java.util.List;
 
 public class TheSpellLibraryClient implements ClientModInitializer {
     public static final String MOD_ID = "the-spell-library";
@@ -65,6 +73,54 @@ public class TheSpellLibraryClient implements ClientModInitializer {
                 matrices.translate(-camPos.x, -camPos.y, -camPos.z);
 
                 renderCircle(matrices,context,areaSpell.range);
+                List<LivingEntity> list=areaSpell.targetEntities();
+                for (LivingEntity entity:list){
+                    Vec3d entityPos= entity.getBoundingBox().getCenter();
+                    Vec3d playerPos= player.getBoundingBox().getCenter();
+                    Vec3d toPlayer= playerPos.subtract(entityPos);
+                    Vec3d symbolVec= toPlayer.multiply(1,0,1).normalize().multiply(entity.getWidth());
+                    Vec3d symbolPos= symbolVec.add(entityPos);
+                    Vec3d perpVec= symbolVec.multiply(0.5);
+                    Vec3d squareBase1= new Vec3d(perpVec.z,0,-perpVec.x);
+                    Vec3d squareBase2= squareBase1.multiply(-1);
+                    Vec3d pos1= squareBase1.add(0,entity.getWidth()/2f,0);
+                    Vec3d pos2= squareBase1.add(0,-entity.getWidth()/2f,0);
+                    Vec3d pos3= squareBase2.add(0,-entity.getWidth()/2f,0);
+                    Vec3d pos4= squareBase2.add(0,entity.getWidth()/2f,0);
+
+                    Tessellator tessellator = Tessellator.getInstance();
+                    BufferBuilder buffer = tessellator.getBuffer();
+                    buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
+                    matrices.push();
+                    float angle= MinecraftClient.getInstance().world.getTime()%360;
+                    matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(angle), (float) symbolPos.getX(), (float) symbolPos.getY(), (float) symbolPos.getZ());
+                    matrices.translate(symbolPos.getX(), symbolPos.getY(), symbolPos.getZ());
+                    Matrix4f transformationMatrix = matrices.peek().getPositionMatrix();
+
+
+                    buffer.vertex(transformationMatrix, (float) pos1.getX(), (float) pos1.getY(), (float) pos1.getZ()).color(255,255,255,150).texture(1,1).next();
+                    buffer.vertex(transformationMatrix, (float) pos4.getX(), (float) pos4.getY(), (float) pos4.getZ()).color(255,255,255,150).texture(0,1).next();
+                    buffer.vertex(transformationMatrix,(float) pos3.getX(), (float) pos3.getY(), (float) pos3.getZ()).color(255,255,255,150).texture(0,0).next();
+                    buffer.vertex(transformationMatrix, (float) pos2.getX(), (float) pos2.getY(), (float) pos2.getZ()).color(255,255,255,150).texture(1,0).next();
+
+                    matrices.pop();
+                    RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
+
+                    RenderSystem.enableBlend();
+                    RenderSystem.blendFuncSeparate(
+                            GlStateManager.SrcFactor.SRC_ALPHA,
+                            GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA,
+                            GlStateManager.SrcFactor.ONE,
+                            GlStateManager.DstFactor.ZERO
+                    );
+
+                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1F);
+                    RenderSystem.setShaderTexture(0, new Identifier(TheSpellLibrary.MOD_ID, "textures/misc/target.png"));
+
+                    tessellator.draw();
+
+                    RenderSystem.disableBlend();
+                }
 
                 matrices.pop();
             }
@@ -79,7 +135,7 @@ public class TheSpellLibraryClient implements ClientModInitializer {
         for (BlockPos pos: Utils.getSphere(player.getBlockPos(),radius)){
             if (MinecraftClient.getInstance().world.getBlockState(pos.down()).isSolid()) {
                 matrices.push();
-                matrices.translate(pos.getX(), pos.getY()+0.01, pos.getZ());
+                matrices.translate(pos.getX(), pos.getY()+0.001, pos.getZ());
                 Matrix4f transformationMatrix = matrices.peek().getPositionMatrix();
 
                 buffer.vertex(transformationMatrix, 0, 0, 0).color(150,20,20,100).next();

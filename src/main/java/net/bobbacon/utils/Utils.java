@@ -12,7 +12,9 @@ import java.util.List;
 public class Utils {
     public static List<BlockPos> getSphere(BlockPos center, float radius){
         List<BlockPos> list= new ArrayList<>();
-        for (int i = 0; i < radius; i++) {
+        list.addAll(getCircle(center,radius));
+
+        for (int i = 1; i < radius; i++) {
             float circleRadius= (float) Math.sqrt(radius*radius-i*i);
             list.addAll(getCircle(center.up(i),circleRadius));
             list.addAll(getCircle(center.down(i),circleRadius));
@@ -40,7 +42,7 @@ public class Utils {
                 }
             }
         }
-        for (int i=-Math.round(radius)+1; i<radius; i++){
+        for (int i=-Math.round(radius)+1; i<Math.round(radius); i++){
             blocks.add(new BlockPos(x +i, y, z));
             blocks.add(new BlockPos(x, y, z +i));
         }
