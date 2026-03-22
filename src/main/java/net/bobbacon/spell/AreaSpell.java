@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public abstract class AreaSpell extends Spell{
-    float range;
+    public float range;
     public AreaSpell(SpellDef<? extends Spell> type, World world, LivingEntity user, AreaSpell template) {
         super(type, world, user, template);
         range= template.range;

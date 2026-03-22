@@ -2,11 +2,15 @@ package net.bobbacon;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.bobbacon.item.ModItems;
 import net.bobbacon.item.ScrollItem;
 import net.bobbacon.particles.ModParticlesClient;
 import net.bobbacon.render.ModRenderLayers;
 import net.bobbacon.render.blockEntity.BlockEntityRenderers;
+import net.bobbacon.spell.CircularAreaSpell;
+import net.bobbacon.spell.Spell;
 import net.bobbacon.spell.SpellDef;
+import net.bobbacon.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -15,7 +19,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
 
@@ -44,39 +50,58 @@ public class TheSpellLibraryClient implements ClientModInitializer {
             }
         });
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
-            MatrixStack matrices = context.matrixStack();
-            Camera camera = context.camera();
+            PlayerEntity player= MinecraftClient.getInstance().player;
+            ItemStack stack=player.getStackInHand(player.getActiveHand());
+            if (!stack.isOf(ModItems.SCROLL)){
+                return;
+            }
+            Spell spell= ScrollItem.getSpell(stack).newSpell(MinecraftClient.getInstance().world, player);
+            if (spell instanceof CircularAreaSpell areaSpell){
+                MatrixStack matrices = context.matrixStack();
+                Camera camera = context.camera();
+                Vec3d camPos = camera.getPos();
 
-            Vec3d camPos = camera.getPos();
+                matrices.push();
+                matrices.translate(-camPos.x, -camPos.y, -camPos.z);
 
-            matrices.push();
-            matrices.translate(0, -1.6, 0);
-//            matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+                renderCircle(matrices,context,areaSpell.range);
 
-            renderCircle(matrices,context);
-
-            matrices.pop();
+                matrices.pop();
+            }
         });
 	}
-    private void renderCircle(MatrixStack matrices, WorldRenderContext context) {
-        Matrix4f transformationMatrix = matrices.peek().getPositionMatrix();
+    private void renderCircle(MatrixStack matrices, WorldRenderContext context,float radius) {
+        PlayerEntity player= MinecraftClient.getInstance().player;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
-        buffer.begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
-        float radius = 8.0f;
-        int segments = 20;
+        for (BlockPos pos: Utils.getSphere(player.getBlockPos(),radius)){
+            if (MinecraftClient.getInstance().world.getBlockState(pos.down()).isSolid()) {
+                matrices.push();
+                matrices.translate(pos.getX(), pos.getY()+0.01, pos.getZ());
+                Matrix4f transformationMatrix = matrices.peek().getPositionMatrix();
 
-        buffer.vertex(transformationMatrix, 0, 0, 0).color(170,30,30,100).next();
-
-
-        for (float i = 0; i <= segments; i++) {
-            double angle2 = 2f * Math.PI * -i/segments;
-            float x2 = (float)(Math.cos(angle2) * radius);
-            float z2 = (float)(Math.sin(angle2) * radius);
-            buffer.vertex(transformationMatrix, x2, 0, z2).color(150,20,20,100).next();
-
+                buffer.vertex(transformationMatrix, 0, 0, 0).color(150,20,20,100).next();
+                buffer.vertex(transformationMatrix, 0, 0, 1).color(150,20,20,100).next();
+                buffer.vertex(transformationMatrix, 1, 0, 1).color(150,20,20,100).next();
+                buffer.vertex(transformationMatrix, 1, 0, 0).color(150,20,20,100).next();
+                matrices.pop();
+            }
         }
+//        buffer.begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
+//        int segments = 20;
+//
+//        buffer.vertex(transformationMatrix, 0, 0, 0).color(170,30,30,100).next();
+//
+//
+//        for (float i = 0; i <= segments; i++) {
+//            double angle2 = 2f * Math.PI * -i/segments;
+//            float x2 = (float)(Math.cos(angle2) * radius);
+//            float z2 = (float)(Math.sin(angle2) * radius);
+//            buffer.vertex(transformationMatrix, x2, 0, z2).color(150,20,20,100).next();
+//
+//        }
 
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 

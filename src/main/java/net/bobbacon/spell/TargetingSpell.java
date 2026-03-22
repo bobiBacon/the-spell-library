@@ -69,11 +69,7 @@ public abstract class TargetingSpell extends Spell{
                 start,
                 end,
                 box,
-                entity -> {
-
-
-
-                    return entity instanceof LivingEntity&&!entity.isSpectator() && entity.canHit()&&user.canSee(entity);},
+                entity -> entity instanceof LivingEntity&&!entity.isSpectator() && entity.canHit()&&user.canSee(entity),
                 range * range
         );
     }
