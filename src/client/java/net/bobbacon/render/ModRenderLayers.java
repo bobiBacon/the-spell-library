@@ -44,5 +44,26 @@ public class ModRenderLayers {
 
                         .build(false)
         );
+
+    }
+    public static RenderLayer magicCircle(Identifier tex) {
+        return RenderLayer.of(
+                "magic_circle",
+                VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+                VertexFormat.DrawMode.QUADS,
+                256,
+                true,
+                true,
+                RenderLayer.MultiPhaseParameters.builder()
+                        .program(RenderPhase.ENTITY_TRANSLUCENT_PROGRAM)
+                        .texture(new RenderPhase.Texture(tex, false, false))
+                        .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
+                        .lightmap(RenderPhase.ENABLE_LIGHTMAP)
+                        .overlay(RenderPhase.ENABLE_OVERLAY_COLOR)
+                        .depthTest(RenderPhase.LEQUAL_DEPTH_TEST)
+                        .writeMaskState(RenderPhase.ALL_MASK)
+                        .build(false)
+        );
+
     }
 }
