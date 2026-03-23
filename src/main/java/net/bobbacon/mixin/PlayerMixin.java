@@ -3,6 +3,7 @@ package net.bobbacon.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.attributes.ModEntityAttributes;
+import net.bobbacon.spell.Spell;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
@@ -21,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntity.class)
 public class PlayerMixin implements PlayerAccessor {
     @Shadow private ItemStack selectedItem;
+    @Unique
+    public Spell currentlyCastingSpell=null;
     @Unique
     private static final TrackedData<Float> MANA = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.FLOAT);
     @Unique
@@ -96,5 +99,17 @@ public class PlayerMixin implements PlayerAccessor {
     @ModifyReturnValue(method = "createPlayerAttributes", at = @At("TAIL"))
     private static DefaultAttributeContainer.Builder customAttributes(DefaultAttributeContainer.Builder original){
         return original.add(ModEntityAttributes.GENERIC_MANA_REGEN,0.05);
+    }
+
+    @Unique
+    @Override
+    public Spell getCurrentlyCastingSpell() {
+        return currentlyCastingSpell;
+    }
+
+    @Unique
+    @Override
+    public void setCurrentlyCastingSpell(Spell currentlyCastingSpell) {
+        this.currentlyCastingSpell = currentlyCastingSpell;
     }
 }

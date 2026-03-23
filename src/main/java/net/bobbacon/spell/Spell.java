@@ -77,6 +77,9 @@ public class Spell {
         return type!= SpellDefs.EMPTY && !((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns().isCoolingDown(type) && hasEnoughMana();
     }
     public void castingTick(BlockPos pos,int remainingTicks){
+        if (user instanceof PlayerEntity){
+            ((PlayerAccessor)user).setCurrentlyCastingSpell(this);
+        }
     }
 
     public boolean isSingleUse(){
@@ -123,5 +126,8 @@ public class Spell {
             list.add(Text.translatable("spell.the-spell-library.tooltip.cooldown",this.type.cooldown/20.0).setStyle(style));
         }
         return list;
+    }
+    public boolean hasCastingRenderer(){
+        return false;
     }
 }

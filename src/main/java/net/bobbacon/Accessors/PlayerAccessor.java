@@ -1,5 +1,8 @@
 package net.bobbacon.Accessors;
 
+import net.bobbacon.spell.Spell;
+import org.spongepowered.asm.mixin.Unique;
+
 public interface PlayerAccessor {
     public float the_spell_library$getMana();
     public float the_spell_library$getMaxMana();
@@ -10,4 +13,9 @@ public interface PlayerAccessor {
     public void the_spell_library$incrementMana();
     public void the_spell_library$decrementMana(float amount);
     public void the_spell_library$decrementMana();
+    @Unique
+    public Spell getCurrentlyCastingSpell();
+
+    @Unique
+    public void setCurrentlyCastingSpell(Spell currentlyCastingSpell);
 }
