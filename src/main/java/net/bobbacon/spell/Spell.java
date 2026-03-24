@@ -39,9 +39,6 @@ public class Spell {
     public Spell createFromTemplate(SpellDef<? extends Spell> type, World world, LivingEntity user) {
         return new Spell(type,world,user,this);
     }
-    public final void initType(SpellDef<? extends Spell> type){
-
-    }
 
     public boolean casted= false;
     public boolean tryCast(BlockPos pos){
@@ -127,7 +124,9 @@ public class Spell {
         }
         return list;
     }
-    public boolean hasCastingRenderer(){
-        return false;
+    public void abort(){
+        if (user instanceof PlayerEntity player){
+            ((PlayerAccessor)player).setCurrentlyCastingSpell(null);
+        }
     }
 }

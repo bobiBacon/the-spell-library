@@ -31,10 +31,10 @@ public class  SpellDef<T extends Spell> {
     public boolean usesDefaultLootTable= true;
     public Rarity rarity= Rarity.COMMON;
     public final SpellSchool school;
+    public boolean hasRenderer=false;
 
     public SpellDef(Spell template, SpellSchool school,float manaCost) {
         this.manaCost= manaCost;
-        template.initType(this);
         this.template = template;
         this.school= school;
     }
@@ -49,6 +49,10 @@ public class  SpellDef<T extends Spell> {
     }
     public SpellDef<? extends Spell> notInDefaultLootTable(){
         usesDefaultLootTable=false;
+        return this;
+    }
+    public SpellDef<? extends Spell> withRenderer(){
+        hasRenderer=true;
         return this;
     }
     public SpellDef<? extends Spell> customSymbolPath(Identifier path){

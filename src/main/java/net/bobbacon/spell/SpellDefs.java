@@ -35,7 +35,7 @@ public class SpellDefs {
     public static final SpellDef<?> WindBurst= registryHelper.register("wind_burst",new SpellDef<>(new ProjectionSpell(10,ParticleTypes.ELECTRIC_SPARK,3,ModParticles.WIND_PROJECTION_PARTICLE),SpellSchools.Wind,10).setCooldown(40).useTinted2dSymbol(0xFFDDFF).setCastTime(10).setRarity(Rarity.COMMON));
     public static final SpellDef<?> FireBoom= registryHelper.register("fire_boom",new SpellDef<>(new FireBoom(10,ParticleTypes.FLAME,2,ModParticles.FIRE_PARTICLE),SpellSchools.FIRE,20).setCooldown(200).useTinted2dSymbol(new Identifier(TheSpellLibrary.MOD_ID,"item/spell/tintable_fire"),0xcc3300,0xe6b800).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING).setCastTime(10).setRarity(Rarity.COMMON));
     public static final SpellDef<?> Gust= registryHelper.register("gust",new SpellDef<>(new LargeProjectionSpell(8,70,3),SpellSchools.Wind,30).setCooldown(200).useTinted2dSymbol(0xFFDDFF).setCastTime(30).setRarity(Rarity.COMMON));
-    public static final SpellDef<?> DarkAura= registryHelper.register("dark_aura",new SpellDef<>(new DarkAura(8),SpellSchools.Necromancy,6).setCooldown(200).useTinted2dSymbol(0x222222).setCastTime(60).setRarity(Rarity.UNCOMMON));
+    public static final SpellDef<?> DarkAura= registryHelper.register("dark_aura",new SpellDef<>(new DarkAura(8),SpellSchools.Necromancy,6).setCooldown(200).useTinted2dSymbol(0x222222).setCastTime(60).withRenderer().setRarity(Rarity.UNCOMMON));
 
     public static final SpellDef<?> EMPTY= registryHelper.register("empty",new SpellDef<>(new Spell(),0).notInDefaultLootTable());
     public static void init(){

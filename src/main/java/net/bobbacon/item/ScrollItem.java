@@ -65,7 +65,7 @@ public class ScrollItem extends Item {
         ((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns()
 
                 .set(spell.type, spell.cooldownTime());
-
+        spell.abort();
         return stack;
     }
 
@@ -83,6 +83,13 @@ public class ScrollItem extends Item {
 //            Spell spell= getSpell(stack).newSpell(world,user);
 //            spell.playCastingSound(user.getBlockPos());
         }
+    }
+
+    @Override
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        super.onStoppedUsing(stack, world, user, remainingUseTicks);
+        Spell spell= getSpell(stack).newSpell(world,user);
+        spell.abort();
     }
 
     @Override

@@ -19,6 +19,7 @@ public class SpellRegistry {
     public static final SimpleRegistry<SpellSchool> SPELL_SCHOOL = FabricRegistryBuilder.createSimple(SCHOOL_REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
+
     public static void init(){
 
     }
