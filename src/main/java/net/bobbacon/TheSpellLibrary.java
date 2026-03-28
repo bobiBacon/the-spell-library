@@ -67,30 +67,30 @@ public class TheSpellLibrary implements ModInitializer {
 		Predicates.init();
 		ModParticles.init();
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-			if (id.equals(new Identifier("minecraft", "entities/villager"))) {
-
-                LootPool.Builder poolBuilder = null;
-                try {
-                    poolBuilder = LootPool.builder()
-                            .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(1f/7f))
-                            .with(ItemEntry.builder(ModItems.SCROLL))
-                            .apply(RandomSpellLootFunction.builder(Predicates.isClericLoot));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-
-
-				tableBuilder.pool(poolBuilder);
-			}
+//			if (id.equals(new Identifier("minecraft", "entities/villager"))) {
+//
+//                LootPool.Builder poolBuilder = null;
+//                try {
+//                    poolBuilder = LootPool.builder()
+//                            .rolls(ConstantLootNumberProvider.create(1))
+//                            .conditionally(RandomChanceLootCondition.builder(1f/20f))
+//                            .with(ItemEntry.builder(ModItems.SCROLL))
+//                            .apply(RandomSpellLootFunction.builder(Predicates.isClericLoot));
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//
+//
+//				tableBuilder.pool(poolBuilder);
+//			}
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
 
 				LootPool.Builder poolBuilder = null;
 				try {
 					poolBuilder = LootPool.builder()
 							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceLootCondition.builder(1f/4f))
+							.conditionally(RandomChanceLootCondition.builder(1f/20f))
 							.with(ItemEntry.builder(ModItems.SCROLL))
 							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
 				} catch (Exception e) {
@@ -104,7 +104,7 @@ public class TheSpellLibrary implements ModInitializer {
 				try {
 					poolBuilder = LootPool.builder()
 							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceLootCondition.builder(1f/7f))
+							.conditionally(RandomChanceLootCondition.builder(1f/10f))
 							.with(ItemEntry.builder(ModItems.SCROLL))
 							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
 				} catch (Exception e) {

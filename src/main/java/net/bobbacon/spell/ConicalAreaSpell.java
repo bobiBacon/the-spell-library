@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public abstract class ConicalAreaSpell extends AreaSpell{
-    float coneAngle;
+    public float coneAngle;
     public ConicalAreaSpell(SpellDef<? extends Spell> type, World world, LivingEntity user, ConicalAreaSpell template) {
         super(type, world, user, template);
         coneAngle= template.coneAngle;
@@ -40,24 +40,27 @@ public abstract class ConicalAreaSpell extends AreaSpell{
                 searchBox,
                 e -> e != user
         );
-        targets.removeIf(entity -> {
-            Vec3d toEntity = entity.getBoundingBox().getCenter().subtract(coneOrigin);
-            Vec3d toEntityFromOrigin = entity.getBoundingBox().getCenter().subtract(origin);
-
-            double distance = toEntity.length();
-
-            if (distance > range+1) return true;
-
-            Vec3d dir = toEntity.normalize();
-
-            double dot = look.dotProduct(dir);
-            double dot2= look.dotProduct(toEntityFromOrigin.normalize());
-
-            return dot <= cosHalfAngle||dot2 < 0 ;
-        });
+        targets.removeIf(entity -> !isInArea(entity.getBoundingBox().getCenter(), coneOrigin, origin, look, cosHalfAngle));
 
         return targets;
     }
+
+    public boolean isInArea(Vec3d pos, Vec3d coneOrigin, Vec3d origin, Vec3d look, double cosHalfAngle) {
+        Vec3d toEntity = pos.subtract(coneOrigin);
+        Vec3d toEntityFromOrigin = pos.subtract(origin);
+
+        double distance = toEntity.length();
+
+        if (distance > range+1) return false;
+
+        Vec3d dir = toEntity.normalize();
+
+        double dot = look.dotProduct(dir);
+        double dot2= look.dotProduct(toEntityFromOrigin.normalize());
+
+        return dot > cosHalfAngle && dot2 >= 0;
+    }
+
     public void shootParticles(ParticleEffect particle, boolean head){
         Vec3d look = user.getRotationVec(1.0F).normalize();
 

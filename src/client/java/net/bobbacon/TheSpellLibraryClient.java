@@ -76,8 +76,13 @@ public class TheSpellLibraryClient implements ClientModInitializer {
             if (spell==null)return;
             if (spell.type.hasRenderer){
                 SpellRenderer renderer = SpellRenderers.getRenderer(spell.type);
-                renderer.renderCasting(context,spell,player);
-//                SpellRenderers.resetDirty(renderer);
+                MatrixStack matrices = context.matrixStack();
+                Camera camera = context.camera();
+                Vec3d camPos = camera.getPos();
+                matrices.push();
+                matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+                renderer.renderCasting(context,spell,player, matrices);
+                matrices.pop();
             }
         });
 	}

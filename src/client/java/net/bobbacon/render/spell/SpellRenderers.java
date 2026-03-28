@@ -25,8 +25,15 @@ public class SpellRenderers {
     private static final Map<SpellDef<?>,SpellRenderer> RENDERERS= new HashMap<>();
     private static final RegistryHelper<SpellRenderer> registryHelper= new RegistryHelper<>(SPELL_RENDERER,TheSpellLibrary.MOD_ID);
     public static final SpellRenderer CIRCULAR_AREA_RENDERER= registryHelper.register("circular",new CircularSpellRenderer());
+    public static final SpellRenderer AREA_RENDERER= registryHelper.register("area",new AreaSpellRenderer());
+    public static final SpellRenderer CONICAL_AREA_RENDERER= registryHelper.register("conical",new ConicalSpellRenderer());
+
     public static void init(){
         bindRenderer(SpellDefs.DarkAura,CIRCULAR_AREA_RENDERER);
+        bindRenderer(SpellDefs.FireWave,AREA_RENDERER);
+        bindRenderer(SpellDefs.Gust,AREA_RENDERER);
+        bindRenderer(SpellDefs.Gust,CONICAL_AREA_RENDERER);
+        bindRenderer(SpellDefs.FireWave,CONICAL_AREA_RENDERER);
     }
     public static void bindRenderer(SpellDef<?> type,SpellRenderer renderer){
         RENDERERS.put(type,renderer);
