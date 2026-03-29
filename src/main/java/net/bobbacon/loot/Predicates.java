@@ -22,7 +22,7 @@ public class Predicates {
     public static final SimpleRegistry<Predicate<?>> PREDICATES = FabricRegistryBuilder.createSimple(PREDICATE_REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
-    public static final Predicate<LootContext> isClericLoot= Registry.register(PREDICATES,Identifier.of(TheSpellLibrary.MOD_ID,"is_cleric_loot"),(lootContext -> {
+    public static final Predicate<LootContext> isClericLoot= Registry.register(PREDICATES,Identifier.of(TheSpellLibrary.MOD_ID,"is_cleric"),(lootContext -> {
         Entity entity = lootContext.get(LootContextParameters.THIS_ENTITY);
 
         if (!(entity instanceof VillagerEntity villager)) {
@@ -31,7 +31,7 @@ public class Predicates {
         return villager.getVillagerData().getProfession() == VillagerProfession.CLERIC;
 
     }));
-    public static final Predicate<LootContext> AlwaysTrueLoot= Registry.register(PREDICATES,Identifier.of(TheSpellLibrary.MOD_ID,"true_loot"),(lootContext -> true));
+    public static final Predicate<LootContext> AlwaysTrueLoot= Registry.register(PREDICATES,Identifier.of(TheSpellLibrary.MOD_ID,"true"),(lootContext -> true));
     public static void init(){
 
     }

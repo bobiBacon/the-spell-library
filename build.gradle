@@ -35,6 +35,10 @@ sourceSets {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
 	}
+	test {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
 }
 
 loom {
@@ -71,11 +75,15 @@ dependencies {
 //	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modImplementation("maven.modrinth:registry-helper-lib:${project.registry_version}")
 	implementation(platform("org.lwjgl:lwjgl-bom:3.3.1"))
 
+}
+test {
+	useJUnitPlatform()
 }
 configurations.all {
 	resolutionStrategy {
@@ -85,6 +93,7 @@ configurations.all {
 		force "org.lwjgl:lwjgl-stb:3.3.1"
 	}
 }
+
 processResources {
 	def isDatagen= !gradle.startParameter.taskNames.first().equals("assemble")
 

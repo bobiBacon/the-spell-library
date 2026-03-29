@@ -1,13 +1,8 @@
 package net.bobbacon.utils;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Utils {
     public static List<BlockPos> getSphere(BlockPos center, float radius){
@@ -66,5 +61,26 @@ public class Utils {
             outer.remove(pos);
         }
         return outer;
+    }
+    public static <T> T weightedRandom(Map<T,Integer> choices) {
+        int totalWeight= 0;
+        Map<T,Integer> startingNumbers = new HashMap<>();
+        for(Map.Entry<T,Integer> entry:choices.entrySet()) {
+            startingNumbers.put(entry.getKey(), totalWeight);
+            totalWeight += choices.get(entry.getKey());
+        }
+        if (totalWeight <= 0) {
+            throw new RuntimeException("no choices present in weighted random");
+        }
+        Random random= new Random();
+        int number = random.nextInt(totalWeight);
+        int cumulative = 0;
+        for (Map.Entry<T,Integer> entry:choices.entrySet()) {
+            cumulative += entry.getValue();
+            if (number < cumulative) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

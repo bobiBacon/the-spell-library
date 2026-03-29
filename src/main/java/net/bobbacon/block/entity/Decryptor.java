@@ -55,7 +55,7 @@ public class Decryptor extends BlockEntity implements Inventory {
 
     public static void tick(World world, BlockPos blockPos, BlockState state, Decryptor decryptor) {
 
-        if (decryptor.isDecrypting()&&world.getTimeOfDay()%600==0){
+        if (decryptor.isDecrypting()&&world.getTimeOfDay()%400==0){
             if (world.isClient){
                 return;
             }

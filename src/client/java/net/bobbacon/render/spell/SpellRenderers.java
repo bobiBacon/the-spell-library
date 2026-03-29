@@ -30,10 +30,9 @@ public class SpellRenderers {
 
     public static void init(){
         bindRenderer(SpellDefs.DarkAura,CIRCULAR_AREA_RENDERER);
-        bindRenderer(SpellDefs.FireWave,AREA_RENDERER);
-        bindRenderer(SpellDefs.Gust,AREA_RENDERER);
         bindRenderer(SpellDefs.Gust,CONICAL_AREA_RENDERER);
         bindRenderer(SpellDefs.FireWave,CONICAL_AREA_RENDERER);
+        bindRenderer(SpellDefs.ExpandedStrength,CIRCULAR_AREA_RENDERER);
     }
     public static void bindRenderer(SpellDef<?> type,SpellRenderer renderer){
         RENDERERS.put(type,renderer);

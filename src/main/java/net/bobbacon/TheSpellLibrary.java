@@ -1,44 +1,30 @@
 package net.bobbacon;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.bobbacon.attributes.ModEntityAttributes;
 import net.bobbacon.block.ModBlocks;
 import net.bobbacon.block.entity.ModBEs;
 import net.bobbacon.item.ModItems;
-import net.bobbacon.item.ScrollItem;
-import net.bobbacon.loot.ModLoot;
-import net.bobbacon.loot.Predicates;
-import net.bobbacon.loot.RandomSpellLootFunction;
-import net.bobbacon.loot.SetSpellFunction;
+import net.bobbacon.loot.*;
 import net.bobbacon.particles.ModParticles;
 import net.bobbacon.ritual.RitualManager;
 import net.bobbacon.sound.ModSounds;
-import net.bobbacon.spell.SpellDef;
 import net.bobbacon.spell.SpellDefs;
+import net.bobbacon.spell.SpellSchool;
+import net.bobbacon.spell.SpellSchools;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootPool;
-import net.minecraft.loot.condition.EntityPropertiesLootCondition;
+import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.predicate.NbtPredicate;
-import net.minecraft.predicate.entity.EntityFlagsPredicate;
-import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.util.Identifier;
-import net.minecraft.village.VillagerProfession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TheSpellLibrary implements ModInitializer {
 	public static final String MOD_ID = "the-spell-library";
@@ -86,32 +72,64 @@ public class TheSpellLibrary implements ModInitializer {
 //			}
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
 
-				LootPool.Builder poolBuilder = null;
-				try {
-					poolBuilder = LootPool.builder()
-							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceLootCondition.builder(1f/20f))
-							.with(ItemEntry.builder(ModItems.SCROLL))
-							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-				tableBuilder.pool(poolBuilder);
+				addSpellLoot(tableBuilder,1f/20f,new ModifierBuilder().add(2,SpellSchools.Arcanic));
 			}
-			if (id.getPath().contains("chests")) {
-
-				LootPool.Builder poolBuilder = null;
-				try {
-					poolBuilder = LootPool.builder()
-							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceLootCondition.builder(1f/10f))
-							.with(ItemEntry.builder(ModItems.SCROLL))
-							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-				tableBuilder.pool(poolBuilder);
+			if (id.equals(new Identifier("minecraft", "chests/desert_pyramid"))) {
+				addSpellLoot(tableBuilder,1/10f,new ModifierBuilder().add(1.5f,SpellSchools.Fire).add(0,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/jungle_temple"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(1.5f,SpellSchools.Wind).add(0.1f,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/stronghold_library"))) {
+				addSpellLoot(tableBuilder,1/10f,new ModifierBuilder().add(false,SpellSchools.Fire,SpellSchools.Wind));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/stronghold_corridor"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.3f,SpellSchools.Necromancy).add(0f,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/end_city_treasure"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.3f,SpellSchools.Fire).add(1.5f,SpellSchools.Arcanic));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/simple_dungeon"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(false,SpellSchools.Wind).add(0.4f,SpellSchools.Necromancy));
 			}
 		});
+	}
+
+	private static void addSpellLoot(LootTable.Builder tableBuilder,float chance, ModifierBuilder builder) {
+		LootPool.Builder poolBuilder = null;
+		try {
+
+			poolBuilder = LootPool.builder()
+					.rolls(ConstantLootNumberProvider.create(1))
+					.conditionally(RandomChanceLootCondition.builder(chance))
+					.with(ItemEntry.builder(ModItems.SCROLL))
+					.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot, builder.build()));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		tableBuilder.pool(poolBuilder);
+	}
+	public class ModifierBuilder {
+		private final ArrayList<SpellLootModifier> modifiers;
+		public ModifierBuilder() {
+            this.modifiers = new ArrayList<>();
+        }
+
+		public ModifierBuilder add(float i, SpellSchool school){
+			modifiers.add(new BySchoolModifier(i,school));
+			return this;
+		}
+		public ModifierBuilder add(boolean includeOrExclude,SpellSchool... school){
+			if (includeOrExclude){
+				modifiers.add(new OnlySchools(List.of(school)));
+			}
+			else {
+				modifiers.add(new ExcludeSchools(List.of(school)));
+			}
+			return this;
+		}
+		public ArrayList<SpellLootModifier> build(){
+			return new ArrayList<>(modifiers);
+		}
 	}
 }
