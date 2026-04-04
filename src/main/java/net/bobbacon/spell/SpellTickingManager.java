@@ -27,4 +27,8 @@ public class SpellTickingManager {
         });
 
     }
+
+    public ArrayList<TickedSpell> getSpells() {
+        return spellsToTick;
+    }
 }

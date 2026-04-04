@@ -53,26 +53,12 @@ public class TheSpellLibrary implements ModInitializer {
 		Predicates.init();
 		ModParticles.init();
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-//			if (id.equals(new Identifier("minecraft", "entities/villager"))) {
-//
-//                LootPool.Builder poolBuilder = null;
-//                try {
-//                    poolBuilder = LootPool.builder()
-//                            .rolls(ConstantLootNumberProvider.create(1))
-//                            .conditionally(RandomChanceLootCondition.builder(1f/20f))
-//                            .with(ItemEntry.builder(ModItems.SCROLL))
-//                            .apply(RandomSpellLootFunction.builder(Predicates.isClericLoot));
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//
-//
-//				tableBuilder.pool(poolBuilder);
-//			}
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
 
-				addSpellLoot(tableBuilder,1f/20f,new ModifierBuilder().add(2,SpellSchools.Arcanic));
+				addSpellLoot(tableBuilder,1f/30f,new ModifierBuilder().add(2,SpellSchools.Arcanic));
+			}
+			if (id.equals(new Identifier("minecraft", "entities/evoker"))) {
+				addSpellLoot(tableBuilder,1f/30f,new ModifierBuilder().add(0.3f,SpellSchools.Necromancy));
 			}
 			if (id.equals(new Identifier("minecraft", "chests/desert_pyramid"))) {
 				addSpellLoot(tableBuilder,1/10f,new ModifierBuilder().add(1.5f,SpellSchools.Fire).add(0,SpellSchools.Necromancy));
@@ -81,17 +67,65 @@ public class TheSpellLibrary implements ModInitializer {
 				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(1.5f,SpellSchools.Wind).add(0.1f,SpellSchools.Necromancy));
 			}
 			if (id.equals(new Identifier("minecraft", "chests/stronghold_library"))) {
-				addSpellLoot(tableBuilder,1/10f,new ModifierBuilder().add(false,SpellSchools.Fire,SpellSchools.Wind));
+				addSpellLoot(tableBuilder,1f,new ModifierBuilder().add(false,SpellSchools.Fire,SpellSchools.Wind));
 			}
 			if (id.equals(new Identifier("minecraft", "chests/stronghold_corridor"))) {
 				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.3f,SpellSchools.Necromancy).add(0f,SpellSchools.Fire));
 			}
 			if (id.equals(new Identifier("minecraft", "chests/end_city_treasure"))) {
-				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.3f,SpellSchools.Fire).add(1.5f,SpellSchools.Arcanic));
+				addSpellLoot(tableBuilder,1f/5f,new ModifierBuilder().add(0.3f,SpellSchools.Fire).add(1.5f,SpellSchools.Arcanic));
 			}
 			if (id.equals(new Identifier("minecraft", "chests/simple_dungeon"))) {
 				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(false,SpellSchools.Wind).add(0.4f,SpellSchools.Necromancy));
 			}
+			if (id.equals(new Identifier("minecraft", "chests/abandoned_mineshaft"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.4f,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/ancient_city"))) {
+				addSpellLoot(tableBuilder,1f/5f,new ModifierBuilder().add(false,SpellSchools.Fire,SpellSchools.Divine).add(1.5f,SpellSchools.Necromancy));
+			}
+			if (id.getPath().contains("bastion")) {
+				addSpellLoot(tableBuilder,1f/8f,new ModifierBuilder().add(3f,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/igloo_chest"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.4f,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/buried_treasure"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(0.4f,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/nether_bridge"))) {
+				addSpellLoot(tableBuilder,1f/8f,new ModifierBuilder().add(3f,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/pillager_outpost"))) {
+				addSpellLoot(tableBuilder,1f/8f,new ModifierBuilder().add(false,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/ruined_portal"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(true,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/shipwreck_treasure"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(false,SpellSchools.Fire,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("betternether", "chests/city"))) {
+				addSpellLoot(tableBuilder,1f/8f,new ModifierBuilder().add(true,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("betternether", "chests/city_common"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(true,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("betternether", "chests/ghast_hive"))) {
+				addSpellLoot(tableBuilder,1/5f,new ModifierBuilder().add(true,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("betternether", "chests/library"))) {
+				addSpellLoot(tableBuilder,1/2f,new ModifierBuilder().add(1.5f,SpellSchools.Fire));
+			}
+			if (id.equals(new Identifier("betternether", "chests/wither_tower"))) {
+				addSpellLoot(tableBuilder,1/5f,new ModifierBuilder().add(1.5f,SpellSchools.Fire).add(1.5f,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("betternether", "chests/wither_tower_bonus"))) {
+				addSpellLoot(tableBuilder,1/3f,new ModifierBuilder().add(1.5f,SpellSchools.Fire).add(1.5f,SpellSchools.Necromancy));
+			}
+
+
+
 		});
 	}
 

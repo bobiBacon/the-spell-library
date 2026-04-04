@@ -106,6 +106,11 @@ public class AreaSpellRenderer implements SpellRenderer{
     }
 
     @Override
+    public void renderingTick(WorldRenderContext context, Spell spell, MatrixStack matrices) {
+
+    }
+
+    @Override
     public void reset() {
         map.clear();
     }

@@ -1,6 +1,7 @@
 package net.bobbacon.spell;
 
 import net.bobbacon.Accessors.WorldAccessor;
+import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -30,10 +31,8 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
     protected void cast(BlockPos pos) {
         user.addVelocity(0,2.5,0);
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,200,0,false,false));
-        if (!world.isClient){
-            WorldAccessor serverWorld= (WorldAccessor) (Object)world;
-            serverWorld.getSpellTickingManager().addSpell(this);
-        }
+        WorldAccessor world = (WorldAccessor) (Object) this.world;
+        world.getSpellTickingManager().addSpell(this);
         consumeMana();
     }
     protected void shoot(){
@@ -51,6 +50,9 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
     int angle3=240;
     @Override
     public boolean tick() {
+        if (world.isClient){
+            TheSpellLibrary.LOGGER.info("Ticking client side");
+        }
         angle++;
         angle2++;
         angle3++;

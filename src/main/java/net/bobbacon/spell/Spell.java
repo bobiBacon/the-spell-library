@@ -4,7 +4,6 @@ package net.bobbacon.spell;
 import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.Accessors.WorldAccessor;
-import net.bobbacon.TheSpellLibrary;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -12,18 +11,19 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Spell {
     public final SpellDef<? extends Spell> type;
     public final World world;
     public final LivingEntity user;
     public int age=0;
-
+    public Vec3d pos;
+    public Vec3d orientation;
 
     protected Spell(SpellDef<? extends Spell> type, World world, LivingEntity user, Spell template) {
         this.type = type;
@@ -48,13 +48,17 @@ public class Spell {
         return casted;
     }
     protected void cast(BlockPos pos){
+        init();
         consumeMana();
         playReleasingSound(pos);
-        if (!world.isClient&&this instanceof TickedSpell spell){
-            WorldAccessor serverWorld= (WorldAccessor) (Object)world;
-            serverWorld.getSpellTickingManager().addSpell(spell);
-        }
     }
+    protected void init(){
+        this.pos=user.getPos();
+        this.orientation= user.getRotationVector().normalize();
+        if (this instanceof TickedSpell spell){
+            WorldAccessor world = (WorldAccessor) (Object) this.world;
+            world.getSpellTickingManager().addSpell(spell);
+        }    }
     public void consumeMana(){
         if (user instanceof PlayerEntity player&&!player.isCreative()){
             ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost);

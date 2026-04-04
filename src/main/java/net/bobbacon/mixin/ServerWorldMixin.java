@@ -13,20 +13,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin implements WorldAccessor {
-    @Shadow public abstract boolean spawnNewEntityAndPassengers(Entity entity);
+public abstract class ServerWorldMixin {
 
-    @Unique
-    public SpellTickingManager spellTickingManager= new SpellTickingManager();
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void onWorldTick(CallbackInfo ci) {
         ServerWorld world = (ServerWorld) (Object) this;
         RitualManager.get(world).tick();
-        spellTickingManager.tickAll();
+        ((WorldAccessor)world).getSpellTickingManager().tickAll();
     }
 
-    @Override
-    public SpellTickingManager getSpellTickingManager() {
-        return spellTickingManager;
-    }
+
 }

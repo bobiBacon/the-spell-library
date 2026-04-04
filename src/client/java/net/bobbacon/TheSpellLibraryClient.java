@@ -1,8 +1,8 @@
 package net.bobbacon;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.bobbacon.Accessors.PlayerAccessor;
+import net.bobbacon.Accessors.WorldAccessor;
+import net.bobbacon.accessor.ClientWorldAccessor;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.item.ScrollItem;
 import net.bobbacon.particles.ModParticlesClient;
@@ -10,34 +10,18 @@ import net.bobbacon.render.ModRenderLayers;
 import net.bobbacon.render.blockEntity.BlockEntityRenderers;
 import net.bobbacon.render.spell.SpellRenderer;
 import net.bobbacon.render.spell.SpellRenderers;
-import net.bobbacon.spell.CircularAreaSpell;
 import net.bobbacon.spell.Spell;
 import net.bobbacon.spell.SpellDef;
-import net.bobbacon.utils.Utils;
+import net.bobbacon.spell.TickedSpell;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TheSpellLibraryClient implements ClientModInitializer {
     public static final String MOD_ID = "the-spell-library";
@@ -64,7 +48,23 @@ public class TheSpellLibraryClient implements ClientModInitializer {
             } else {
             }
         });
+        WorldRenderEvents.AFTER_ENTITIES.register(context ->{
+            for (TickedSpell tickedSpell: ((WorldAccessor)MinecraftClient.getInstance().world).getSpellTickingManager().getSpells()){
+                Spell spell1= (Spell) tickedSpell;
+                if (spell1.type.hasRenderer) {
+                    SpellRenderer renderer = ((ClientWorldAccessor)MinecraftClient.getInstance().world).getSpellRendererManager().getOrCreate(spell1);
+                    MatrixStack matrices = context.matrixStack();
+                    Camera camera = context.camera();
+                    Vec3d camPos = camera.getPos();
+                    matrices.push();
+                    matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+                    renderer.renderingTick(context,spell1, matrices);
+                    matrices.pop();
+                }
+            }
+        });
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
+
             PlayerEntity player= MinecraftClient.getInstance().player;
             ItemStack stack=player.getStackInHand(player.getActiveHand());
             if (!stack.isOf(ModItems.SCROLL)){
@@ -73,17 +73,19 @@ public class TheSpellLibraryClient implements ClientModInitializer {
 //            SpellDef<?> type=ScrollItem.getSpell(stack);
 //            Spell spell= type.newSpell(MinecraftClient.getInstance().world, player);
             Spell spell= ((PlayerAccessor)player).getCurrentlyCastingSpell();
-            if (spell==null)return;
-            if (spell.type.hasRenderer){
-                SpellRenderer renderer = SpellRenderers.getRenderer(spell.type);
-                MatrixStack matrices = context.matrixStack();
-                Camera camera = context.camera();
-                Vec3d camPos = camera.getPos();
-                matrices.push();
-                matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-                renderer.renderCasting(context,spell,player, matrices);
-                matrices.pop();
+            if (spell!=null) {
+                if (spell.type.hasRenderer) {
+                    SpellRenderer renderer = SpellRenderers.getRendererFactory(spell.type).create();
+                    MatrixStack matrices = context.matrixStack();
+                    Camera camera = context.camera();
+                    Vec3d camPos = camera.getPos();
+                    matrices.push();
+                    matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+                    renderer.renderCasting(context, spell, player, matrices);
+                    matrices.pop();
+                }
             }
+
         });
 	}
 
