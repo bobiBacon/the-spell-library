@@ -13,6 +13,8 @@ public class ModItems {
     private static final RegistryHelper<Item> registryHelper=new RegistryHelper<>(Registries.ITEM, TheSpellLibrary.MOD_ID);
     public static final Item SCROLL = registryHelper.register("scroll", new ScrollItem(new Item.Settings()));
     public static final Item DECRYPTOR = registryHelper.register("decryptor", new BlockItem(ModBlocks.DECRYPTOR, new Item.Settings()));
+    public static final Item MagicalDiamond = registryHelper.register("magical_diamond", new MagicalDiamond(new Item.Settings()));
+    public static final Item CryingDiamond = registryHelper.register("crying_diamond", new Item(new Item.Settings()));
 
 
     public static void init(){

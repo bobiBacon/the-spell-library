@@ -26,6 +26,10 @@ repositories {
 			includeGroup 'maven.modrinth'
 		}
 	}
+	maven {
+		name = "Ladysnake Mods"
+		url = "https://maven.ladysnake.org/releases"
+	}
 }
 sourceSets {
 	datagen {
@@ -80,7 +84,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modImplementation("maven.modrinth:registry-helper-lib:${project.registry_version}")
 	implementation(platform("org.lwjgl:lwjgl-bom:3.3.1"))
-
+	modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.3"
+	modApi "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.3"
 }
 test {
 	useJUnitPlatform()

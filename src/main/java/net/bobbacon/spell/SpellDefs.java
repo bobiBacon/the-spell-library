@@ -37,8 +37,7 @@ public class SpellDefs {
     public static final SpellDef<?> DarkAura= registryHelper.register("dark_aura",new SpellDef<>(new DarkAura(8),SpellSchools.Necromancy,6).setCooldown(200).useTinted2dSymbol(0x222222).setCastTime(60).withRenderer().setRarity(Rarity.UNCOMMON));
     public static final SpellDef<?> ExpandedStrength = registryHelper.register("expanded_strength",new SpellDef<>(new InstantAreaEffect(8,new StatusEffectInstance(StatusEffects.STRENGTH,1800)),SpellSchools.Divine,50).setCooldown(400).useTinted2dSymbol(0xFFB900).setCastTime(60).withRenderer());
     public static final SpellDef<?> Strength = registryHelper.register("strength",new SpellDef<>(new SelfEffectSpell(new StatusEffectInstance(StatusEffects.STRENGTH,600)),SpellSchools.Divine,30).setCooldown(400).useTinted2dSymbol(0xFFB900).setCastTime(60));
-    public static final SpellDef<?> Levitation = registryHelper.register("levitation",new SpellDef<>(new SelfEffectSpell(new StatusEffectInstance(StatusEffects.LEVITATION,100,4)),SpellSchools.Arcanic,20).setCooldown(40).useTinted2dSymbol(0x0782F5).setCastTime(20));
-    public static final SpellDef<?> Punishment = registryHelper.register("punishment",new SpellDef<>(new PunishmentSpell(8,40),SpellSchools.Divine,20).setCooldown(40).useTinted2dSymbol(0xFFB900).setCastTime(20).withRenderer());
+    public static final SpellDef<?> Levitation = registryHelper.register("levitation",new SpellDef<>(new Levitation(),SpellSchools.Arcanic,20).setCooldown(40).useTinted2dSymbol(0x0782F5).setCastTime(20).withConcentrationRequired());
 
     public static final SpellDef<?> EMPTY= registryHelper.register("empty",new SpellDef<>(new Spell(),0).notInDefaultLootTable());
     public static void init(){

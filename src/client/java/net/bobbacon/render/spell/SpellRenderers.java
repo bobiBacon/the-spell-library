@@ -2,6 +2,7 @@ package net.bobbacon.render.spell;
 
 import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.api.RegistryHelper;
+import net.bobbacon.spell.CircularAreaSpell;
 import net.bobbacon.spell.SpellDef;
 import net.bobbacon.spell.SpellDefs;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -22,17 +23,15 @@ public class SpellRenderers {
             .buildAndRegister();
     private static final Map<SpellDef<?>,SpellRendererFactory> RENDERER_FACTORIES = new HashMap<>();
     private static final RegistryHelper<SpellRendererFactory> registryHelper= new RegistryHelper<>(SPELL_RENDERER,TheSpellLibrary.MOD_ID);
-    public static final SpellRendererFactory CIRCULAR_AREA_RENDERER= registryHelper.register("circular",CircularSpellRenderer::new);
+    public static final SpellRendererFactory CIRCULAR_AREA_RENDERER= registryHelper.register("circular", CircularSpellRenderer::new);
     public static final SpellRendererFactory AREA_RENDERER= registryHelper.register("area",AreaSpellRenderer::new);
     public static final SpellRendererFactory CONICAL_AREA_RENDERER= registryHelper.register("conical",ConicalSpellRenderer::new);
-    public static final SpellRendererFactory PUNISHMENT_RENDERER= registryHelper.register("punishment", PunishmentSpellRenderer::new);
 
     public static void init(){
         bindRenderer(SpellDefs.DarkAura,CIRCULAR_AREA_RENDERER);
         bindRenderer(SpellDefs.Gust,CONICAL_AREA_RENDERER);
         bindRenderer(SpellDefs.FireWave,CONICAL_AREA_RENDERER);
         bindRenderer(SpellDefs.ExpandedStrength,CIRCULAR_AREA_RENDERER);
-        bindRenderer(SpellDefs.Punishment,PUNISHMENT_RENDERER);
     }
     public static void bindRenderer(SpellDef<?> type,SpellRendererFactory renderer){
         RENDERER_FACTORIES.put(type,renderer);

@@ -3,9 +3,9 @@ package net.bobbacon.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.attributes.ModEntityAttributes;
+import net.bobbacon.spell.Mana;
 import net.bobbacon.spell.Spell;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -20,14 +20,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntity.class)
-public class PlayerMixin implements PlayerAccessor {
+public abstract class PlayerMixin implements PlayerAccessor {
     @Shadow private ItemStack selectedItem;
+
+    @Shadow public abstract void resetLastAttackedTicks();
+
     @Unique
     public Spell currentlyCastingSpell=null;
     @Unique
     private static final TrackedData<Float> MANA = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.FLOAT);
     @Unique
     private static final TrackedData<Float> MAX_MANA = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.FLOAT);
+//    public HashMap<SpellSchool, Mana> schoolsMana=Mana.getManaMap();
 
     @Override
     public float the_spell_library$getMana() {
@@ -93,7 +97,18 @@ public class PlayerMixin implements PlayerAccessor {
         float minimumHealth= maxHealth*0.1f;
         if (maxHealth!=0&&self.getHealth()>minimumHealth){
             float i=  (self.getHealth()-minimumHealth)/(maxHealth-minimumHealth);
-            the_spell_library$incrementMana(this.the_spell_library$getManaRegenRate()*i*i);
+            if (Mana.getClassicMana(self)<Mana.getMaxClassicMana(self)){
+                the_spell_library$incrementMana(this.the_spell_library$getManaRegenRate()*i*i);
+            } else  {
+                for (var entry:Mana.getSchoolsMana(self).entrySet()){
+                    Mana mana = entry.getValue();
+                    if (mana.getManaPoints()>=mana.getMax()){
+                        continue;
+                    }
+                    mana.addMana(this.the_spell_library$getManaRegenRate()*i*i);
+                    return;
+                }
+            }
         }
     }
     @ModifyReturnValue(method = "createPlayerAttributes", at = @At("TAIL"))
@@ -112,4 +127,6 @@ public class PlayerMixin implements PlayerAccessor {
     public void setCurrentlyCastingSpell(Spell currentlyCastingSpell) {
         this.currentlyCastingSpell = currentlyCastingSpell;
     }
+
+
 }

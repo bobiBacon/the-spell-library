@@ -22,10 +22,11 @@ public class  SpellDef<T extends Spell> {
     public Identifier customTextureId= null;
     public int cooldown= 0;
     public int castTime = 20;
+    public boolean requiresConcentration = false;
     public float manaCost=0;
     Identifier tintedTexture2d = null;
     final ArrayList<Integer> tints= new ArrayList<>();
-    private final Spell template;
+    public final Spell template;
     public SoundEvent castingSound= ModSounds.DEFAULT_CASTING;
     public SoundEvent releasingSound=ModSounds.DEFAULT_RELEASING;
     public boolean usesDefaultLootTable= true;
@@ -74,6 +75,13 @@ public class  SpellDef<T extends Spell> {
     }
     public SpellDef<? extends Spell> setMana(float amount){
         this.manaCost=amount;
+        return this;
+    }
+    public SpellDef<? extends Spell> withConcentrationRequired(){
+        if (!(template instanceof TickedSpell)){
+            throw new UnsupportedOperationException("Spell That needs concentration has to be a ticked spell");
+        }
+        this.requiresConcentration =true;
         return this;
     }
     public SpellDef<? extends Spell> setCastTime(int castTime){
@@ -169,5 +177,12 @@ public class  SpellDef<T extends Spell> {
     }
     public List<Text> getTooltips(){
         return template.getTooltips();
+    }
+
+    public int getConcentrationTime() {
+        if (requiresConcentration&&template instanceof TickedSpell tickedSpell){
+            return tickedSpell.getMaxTime();
+        }
+        return 0;
     }
 }

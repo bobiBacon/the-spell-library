@@ -23,17 +23,16 @@ import org.joml.Matrix4f;
 import java.util.HashMap;
 import java.util.List;
 
-public class CircularSpellRenderer extends AreaSpellRenderer implements SpellRenderer{
+public class CircularSpellRenderer<T extends CircularAreaSpell> extends AreaSpellRenderer<T>{
 
     @Override
-    public void renderCasting(WorldRenderContext context, Spell spell, PlayerEntity player,MatrixStack matrices) {
-        CircularAreaSpell areaSpell= (CircularAreaSpell) spell;
+    public void renderCasting(WorldRenderContext context, T spell, PlayerEntity player,MatrixStack matrices) {
 
 
         matrices.push();
 
 
-        renderCircle(matrices,context,areaSpell.range,spell.type.school.color);
+        renderCircle(matrices,context,spell.range,spell.type.school.color);
         super.renderCasting(context, spell, player, matrices);
         matrices.pop();
     }

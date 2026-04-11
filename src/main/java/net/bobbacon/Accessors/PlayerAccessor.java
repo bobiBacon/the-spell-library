@@ -1,7 +1,11 @@
 package net.bobbacon.Accessors;
 
+import net.bobbacon.spell.Mana;
 import net.bobbacon.spell.Spell;
+import net.bobbacon.spell.SpellSchool;
 import org.spongepowered.asm.mixin.Unique;
+
+import java.util.HashMap;
 
 public interface PlayerAccessor {
     public float the_spell_library$getMana();

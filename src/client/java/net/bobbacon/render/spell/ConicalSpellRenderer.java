@@ -12,9 +12,9 @@ import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConicalSpellRenderer extends  AreaSpellRenderer{
+public class ConicalSpellRenderer<T extends ConicalAreaSpell> extends  AreaSpellRenderer<T>{
     @Override
-    public void renderCasting(WorldRenderContext context, Spell spell, PlayerEntity player, MatrixStack matrices) {
+    public void renderCasting(WorldRenderContext context, T spell, PlayerEntity player, MatrixStack matrices) {
         super.renderCasting(context, spell, player, matrices);
         renderQuadOnVisible(getPos(player,(ConicalAreaSpell) spell),matrices,spell.type.school.color);
     }

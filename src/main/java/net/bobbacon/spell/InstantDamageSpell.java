@@ -23,7 +23,7 @@ public class InstantDamageSpell extends TargetingSpell{
 
     }
 
-    InstantDamageSpell(float range, float damage, RegistryKey<DamageType> damageType, DefaultParticleType particleType) {
+    public InstantDamageSpell(float range, float damage, RegistryKey<DamageType> damageType, DefaultParticleType particleType) {
         super(range,particleType);
         this.damage=damage;
         this.damageType= damageType;

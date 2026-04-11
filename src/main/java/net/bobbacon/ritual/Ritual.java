@@ -58,16 +58,17 @@ public abstract class Ritual {
         this.center = center;
         this.world = world;
         this.id= UUID.randomUUID();
+        definePhases();
         markDirty();
     }
     public Ritual(World world, NbtCompound nbt){
         this.world = world;
-
+        definePhases();
         readNbt(nbt);
     }
     /**This should redirect to the class constructor using nbt*/
     public abstract Ritual create(World world, NbtCompound nbtCompound);
-
+    public abstract void definePhases();
     /**only evaluated on server side*/
     protected void tick(){
         if (started){

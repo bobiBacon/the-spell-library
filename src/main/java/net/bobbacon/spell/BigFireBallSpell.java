@@ -31,9 +31,9 @@ public class BigFireBallSpell extends ProjectileShootingSpell implements TickedS
     protected void cast(BlockPos pos) {
         user.addVelocity(0,2.5,0);
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,200,0,false,false));
-        WorldAccessor world = (WorldAccessor) (Object) this.world;
-        world.getSpellTickingManager().addSpell(this);
         consumeMana();
+        init();
+        applyCooldown();
     }
     protected void shoot(){
         if (!world.isClient()){

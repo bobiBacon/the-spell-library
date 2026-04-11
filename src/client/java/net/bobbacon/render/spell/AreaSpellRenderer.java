@@ -25,15 +25,14 @@ import org.joml.Matrix4f;
 import java.util.HashMap;
 import java.util.List;
 
-public class AreaSpellRenderer implements SpellRenderer{
+public class AreaSpellRenderer<T extends AreaSpell> implements SpellRenderer<T>{
     private static HashMap<LivingEntity, Integer> map= new HashMap<>();
 
     @Override
-    public void renderCasting(WorldRenderContext context, Spell spell, PlayerEntity player, MatrixStack matrices) {
-        AreaSpell areaSpell= (AreaSpell) spell;
+    public void renderCasting(WorldRenderContext context, T spell, PlayerEntity player, MatrixStack matrices) {
 
         HashMap<LivingEntity,Integer> copy= new HashMap<>();
-        List<LivingEntity> list=areaSpell.targetEntities();
+        List<LivingEntity> list=spell.targetEntities();
         list.removeIf(Entity::isInvisible);
         for (LivingEntity entity:list){
             copy.put(entity, map.getOrDefault(entity, 0));
@@ -106,7 +105,7 @@ public class AreaSpellRenderer implements SpellRenderer{
     }
 
     @Override
-    public void renderingTick(WorldRenderContext context, Spell spell, MatrixStack matrices) {
+    public void renderingTick(WorldRenderContext context, T spell, MatrixStack matrices) {
 
     }
 

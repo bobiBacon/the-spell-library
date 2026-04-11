@@ -14,12 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(net.bobbacon.spell.Spell.class)
 public class SpellMixin {
-    @Inject(method = "abort", at= @At("HEAD"),remap = false)
+    @Inject(method = "stopCasting", at= @At("HEAD"),remap = false)
     private void injectAbort(CallbackInfo c){
-        Spell self= (Spell)(Object)this;
-        if (self.type.hasRenderer){
-            SpellRendererManager spellRendererManager=((ClientWorldAccessor) MinecraftClient.getInstance().world).getSpellRendererManager();
-            spellRendererManager.remove(self);
-        }
+//        Spell self= (Spell)(Object)this;
+//        if (self.type.hasRenderer){
+//            SpellRendererManager spellRendererManager=((ClientWorldAccessor) MinecraftClient.getInstance().world).getSpellRendererManager();
+//            spellRendererManager.remove(self);
+//        }
     }
 }

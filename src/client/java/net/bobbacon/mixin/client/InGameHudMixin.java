@@ -1,7 +1,8 @@
 package net.bobbacon.mixin.client;
 
-import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.TheSpellLibrary;
+import net.bobbacon.spell.Mana;
+import net.bobbacon.spell.SpellSchool;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,13 +22,11 @@ public class InGameHudMixin {
     private void renderCustomBars(DrawContext context, CallbackInfo ci){
         InGameHud self= (InGameHud) (Object)this;
         self.client.getProfiler().push("mana");
-        PlayerAccessor playerEntity = (PlayerAccessor) self.getCameraPlayer();
-        this.renderManaBar(context,playerEntity.the_spell_library$getMaxMana(),playerEntity.the_spell_library$getMana());
+        this.renderManaBar(context);
 
     }
     @Unique
-    public  void renderManaBar(DrawContext context, float max, float amount){
-//        TheSpellLibrary.LOGGER.info("render mana bar");
+    public  void renderManaBar(DrawContext context){
         InGameHud self= (InGameHud) (Object)this;
 
         self.client.getProfiler().push("manaBar");
@@ -39,8 +38,24 @@ public class InGameHudMixin {
         if (player.isSubmergedIn(FluidTags.WATER) || Math.min(player.getAir(), maxAir) < maxAir) {
             y-=10;
         }
+        float max= Mana.getMaxMana(player);
+        float classicAmount= Mana.getClassicMana(player);
         context.drawTexture(MANA_BAR, x,y, 0, 5, 81, 5);
-        context.drawTexture(MANA_BAR, x ,y , 0, 0, (int) (81*amount/max), 5);
+        float cumulativeWidth = 81 * classicAmount / max;
+        context.drawTexture(MANA_BAR, x ,y , 0, 0, (int) cumulativeWidth, 5);
+
+        var schoolsMana= Mana.getSchoolsMana(player);
+        int overWidth=0;
+        for (var entry: schoolsMana.entrySet()){
+            SpellSchool school=entry.getKey();
+            float width= 81 * entry.getValue().getManaPoints() / max;
+            context.drawTexture(school.texture, (int) (x+cumulativeWidth),y , (int) (school.textureU+cumulativeWidth), school.textureV, (int) width, 5);
+            cumulativeWidth+=width;
+
+            float overAmount = entry.getValue().getOverAmount();
+            context.drawTexture(school.texture,x+overWidth,y+8 , overWidth, 0, (int) overAmount, 5);
+            overWidth+= (int) overAmount;
+        }
 
 //        if (i > 0) {
 //            int j = 182;

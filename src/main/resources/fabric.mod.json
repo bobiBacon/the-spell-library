@@ -2,6 +2,11 @@
 	"schemaVersion": 1,
 	"id": "the-spell-library",
 	"version": "${version}",
+	"custom": {
+		"cardinal-components": [
+			"the-spell-library:schools_mana"
+		]
+	},
 	"name": "The Spell Library",
 	"description": "A code-driven library that provides developer-friendly utilities. It serves as a solid foundation for creating highly customizable spells and rituals.",
 	"authors": [
@@ -20,7 +25,12 @@
 		],
 		"client": [
 			"net.bobbacon.TheSpellLibraryClient"
-		]		${datagenEntrypoint}
+		],
+		"cardinal-components": [
+			"net.bobbacon.components.ModComponents"
+		]
+		${datagenEntrypoint}
+
 
 },
 	"mixins": [
@@ -35,6 +45,8 @@
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*",
-		"registry-helper-lib": "*"
+		"registry-helper-lib": "*",
+		"cardinal-components-base": "*",
+		"cardinal-components-entity": "*"
 	}
 }

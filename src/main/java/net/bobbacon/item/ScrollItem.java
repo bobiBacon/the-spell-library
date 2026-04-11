@@ -1,11 +1,7 @@
 package net.bobbacon.item;
 
-import net.bobbacon.Accessors.LivingEntityAccessor;
-import net.bobbacon.spell.SpellRegistry;
-import net.bobbacon.spell.Spell;
-import net.bobbacon.spell.SpellDef;
-import net.bobbacon.spell.SpellDefs;
-import net.minecraft.client.item.TooltipContext;
+import net.bobbacon.Accessors.PlayerAccessor;
+import net.bobbacon.spell.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -14,12 +10,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ScrollItem extends Item {
@@ -33,39 +26,48 @@ public class ScrollItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack= user.getStackInHand(hand);
-        Spell spell= getSpell(stack).newSpell(world,user);
+        Spell spell= ((PlayerAccessor)user).getCurrentlyCastingSpell();
+        SpellDef<?> spellType = getSpell(stack);
+        if (spell==null||spellType !=spell.type){
+            spell= spellType.newSpell(world, user);
+        }
         boolean b= spell.canCast(user.getBlockPos());
         if (b){
+            ((PlayerAccessor)user).setCurrentlyCastingSpell(spell);
             user.setCurrentHand(hand);
             spell.playCastingSound(user.getBlockPos());
             return TypedActionResult.consume(stack);
         }
         return TypedActionResult.fail(stack);
     }
+    public void castSpell(ItemStack stack, World world, LivingEntity user,Spell spell){
+        boolean b= spell.tryCast(user.getBlockPos());
 
+        if (!b){
+            onStoppedUsing(stack,world,user,spell.getConcentrationTime());
+        }
+    }
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        Spell spell= getSpell(stack).newSpell(world,user);
-        boolean b= spell.tryCast(user.getBlockPos());
-        if (!b){
-            return super.finishUsing(stack, world, user);
+        Spell spell= ((PlayerAccessor)user).getCurrentlyCastingSpell();
+        SpellDef<?> spellType = getSpell(stack);
+        if (spell==null||spellType !=spell.type){
+            onStoppedUsing(stack,world,user,0);
+        }
+        if (!spell.type.requiresConcentration){
+            castSpell(stack,world,user,spell);
         }
         boolean b2= true;
         if (user instanceof PlayerEntity player){
             b2= !player.isCreative();
-
-
         }
         if (spell.isSingleUse()){
             if (b2){
                 stack.decrement(1);
             }
         }
-        //apply cooldown
-        ((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns()
 
-                .set(spell.type, spell.cooldownTime());
-        spell.abort();
+        spell.stopCasting();
         return stack;
     }
 
@@ -73,11 +75,18 @@ public class ScrollItem extends Item {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        Spell spell= getSpell(stack).newSpell(world,user);
+        Spell spell= ((PlayerAccessor)user).getCurrentlyCastingSpell();
+        SpellDef<?> spellType = getSpell(stack);
+        if (spell==null||spellType !=spell.type){
+            onStoppedUsing(stack,world,user,remainingUseTicks);
+            return;
+        }
         spell.castingTick(user.getBlockPos(),remainingUseTicks);
+        if (remainingUseTicks==spell.getConcentrationTime()&&spell.type.requiresConcentration){
+            castSpell(stack,world,user,spell);
+        }
         if (remainingUseTicks==0){
             finishUsing(stack,world,user);
-            return;
         }
         if (((getMaxUseTime(stack)-remainingUseTicks)&11111)==0){
 //            Spell spell= getSpell(stack).newSpell(world,user);
@@ -88,8 +97,12 @@ public class ScrollItem extends Item {
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         super.onStoppedUsing(stack, world, user, remainingUseTicks);
-        Spell spell= getSpell(stack).newSpell(world,user);
-        spell.abort();
+        Spell spell= ((PlayerAccessor)user).getCurrentlyCastingSpell();
+        SpellDef<?> spellType = getSpell(stack);
+        if (spell==null||spellType !=spell.type){
+            return;
+        }
+        spell.stopCasting();
     }
 
     @Override
@@ -149,7 +162,7 @@ public class ScrollItem extends Item {
     @Override
     public int getMaxUseTime(ItemStack stack) {
         SpellDef<?> spell= getSpell(stack);
-        return spell.getCastTime();
+        return spell.getCastTime()+spell.getConcentrationTime();
     }
 
     @Override

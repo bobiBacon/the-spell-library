@@ -4,6 +4,8 @@ package net.bobbacon.spell;
 import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.Accessors.WorldAccessor;
+import net.bobbacon.components.ManaComponent;
+import net.bobbacon.components.ModComponents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -16,6 +18,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Spell {
     public final SpellDef<? extends Spell> type;
@@ -51,18 +54,22 @@ public class Spell {
         init();
         consumeMana();
         playReleasingSound(pos);
+        applyCooldown();
+    }
+    protected void applyCooldown(){
+        ((LivingEntityAccessor)user).the_spell_library$getSpellCooldowns()
+
+                .set(this.type, this.getCooldownTime());
     }
     protected void init(){
         this.pos=user.getPos();
         this.orientation= user.getRotationVector().normalize();
-        if (this instanceof TickedSpell spell){
+        if (this instanceof TickedSpell){
             WorldAccessor world = (WorldAccessor) (Object) this.world;
-            world.getSpellTickingManager().addSpell(spell);
+            world.getSpellTickingManager().addSpell((TickedSpell) this);
         }    }
     public void consumeMana(){
-        if (user instanceof PlayerEntity player&&!player.isCreative()){
-            ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost);
-        }
+        consumeMana(1);
     }
     public boolean hasEnoughMana(){
         if (user instanceof PlayerEntity player){
@@ -86,9 +93,10 @@ public class Spell {
     public boolean isSingleUse(){
         return type.isSingleUse;
     }
-    public int cooldownTime(){
+    public int getCooldownTime(){
         return type.cooldown;
     }
+
     public void playCastingSound(BlockPos pos){
         playCastingSound(pos, type.castingSound);
     }
@@ -110,7 +118,18 @@ public class Spell {
     }
     public void consumeMana(float modifier){
         if (user instanceof PlayerEntity player&&!player.isCreative()){
-            ((PlayerAccessor)player).the_spell_library$decrementMana(type.manaCost*modifier);
+            float toConsume=type.manaCost*modifier;
+            Map<SpellSchool, Mana> manaMap = Mana.getSchoolsMana(player);
+            Mana mana=manaMap.get(getSchool());
+            float manaPoints = mana.getTotalMana();
+            if (toConsume>= manaPoints && manaPoints >0){
+                toConsume-= manaPoints;
+                mana.useMana(manaPoints);
+            } else if (toConsume < manaPoints) {
+                mana.useMana(toConsume);
+                toConsume=0;
+            }
+            ((PlayerAccessor)player).the_spell_library$decrementMana(toConsume);
         }
     }
     public SpellSchool getSchool(){
@@ -128,9 +147,13 @@ public class Spell {
         }
         return list;
     }
-    public void abort(){
+    public void stopCasting(){
         if (user instanceof PlayerEntity player){
             ((PlayerAccessor)player).setCurrentlyCastingSpell(null);
         }
+    }
+
+    public int getConcentrationTime() {
+        return type.getConcentrationTime();
     }
 }

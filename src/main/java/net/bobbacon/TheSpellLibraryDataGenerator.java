@@ -10,8 +10,10 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
+import net.minecraft.data.client.Models;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
 import java.util.function.Consumer;
@@ -35,6 +37,8 @@ public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
 
 		@Override
 		public void generateItemModels(ItemModelGenerator itemModelGenerator) {
+			itemModelGenerator.register(ModItems.MagicalDiamond, Models.GENERATED);
+			itemModelGenerator.register(ModItems.CryingDiamond, Models.GENERATED);
 		}
 	}
 	public static class ModRecipeGenerator extends FabricRecipeProvider {
@@ -49,6 +53,11 @@ public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
 					.input('i', Items.IRON_INGOT).input('d',Items.DIAMOND).input('s',Items.STONE_BRICKS)
 					.criterion(FabricRecipeProvider.hasItem(ModItems.SCROLL),
 							FabricRecipeProvider.conditionsFromItem(ModItems.SCROLL))
+					.offerTo(consumer);
+			ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC,ModItems.MagicalDiamond)
+					.input(Items.DIAMOND).input(Items.LAPIS_LAZULI,2)
+					.criterion(FabricRecipeProvider.hasItem(Items.DIAMOND),
+							FabricRecipeProvider.conditionsFromItem(Items.DIAMOND))
 					.offerTo(consumer);
 		}
 	}

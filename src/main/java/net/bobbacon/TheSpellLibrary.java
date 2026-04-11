@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
+import net.minecraft.loot.condition.RandomChanceWithLootingLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.util.Identifier;
@@ -55,10 +56,36 @@ public class TheSpellLibrary implements ModInitializer {
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
 
-				addSpellLoot(tableBuilder,1f/30f,new ModifierBuilder().add(2,SpellSchools.Arcanic));
+				LootPool.Builder poolBuilder = null;
+				try {
+					poolBuilder = LootPool.builder()
+							.rolls(ConstantLootNumberProvider.create(1))
+							.conditionally(RandomChanceWithLootingLootCondition.builder(0.02f,0.01f))
+							.with(ItemEntry.builder(net.bobbacon.item.ModItems.SCROLL))
+							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot, new ArrayList<>(List.of(new BySchoolModifier[]{new BySchoolModifier(2,SpellSchools.Arcanic)}))));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+
+
+
+				tableBuilder.pool(poolBuilder);
 			}
 			if (id.equals(new Identifier("minecraft", "entities/evoker"))) {
-				addSpellLoot(tableBuilder,1f/30f,new ModifierBuilder().add(0.3f,SpellSchools.Necromancy));
+				LootPool.Builder poolBuilder = null;
+				try {
+					poolBuilder = LootPool.builder()
+							.rolls(ConstantLootNumberProvider.create(1))
+							.conditionally(RandomChanceWithLootingLootCondition.builder(0.02f,0.01f))
+							.with(ItemEntry.builder(net.bobbacon.item.ModItems.SCROLL))
+							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot, new ArrayList<>()));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+
+
+
+				tableBuilder.pool(poolBuilder);
 			}
 			if (id.equals(new Identifier("minecraft", "chests/desert_pyramid"))) {
 				addSpellLoot(tableBuilder,1/10f,new ModifierBuilder().add(1.5f,SpellSchools.Fire).add(0,SpellSchools.Necromancy));
@@ -104,6 +131,9 @@ public class TheSpellLibrary implements ModInitializer {
 			}
 			if (id.equals(new Identifier("minecraft", "chests/shipwreck_treasure"))) {
 				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder().add(false,SpellSchools.Fire,SpellSchools.Necromancy));
+			}
+			if (id.equals(new Identifier("minecraft", "chests/woodland_mansion"))) {
+				addSpellLoot(tableBuilder,1f/10f,new ModifierBuilder());
 			}
 			if (id.equals(new Identifier("betternether", "chests/city"))) {
 				addSpellLoot(tableBuilder,1f/8f,new ModifierBuilder().add(true,SpellSchools.Fire));

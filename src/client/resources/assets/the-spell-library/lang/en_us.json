@@ -1,4 +1,7 @@
 {
+  "item.the-spell-library.magical_diamond": "Magical Diamond",
+  "item.the-spell-library.crying_diamond": "Crying Diamond",
+
   "item.the-spell-library.scroll": "Unknown Scroll",
   "item.the-spell-library.scroll.blank": "Blank Scroll",
   "item.the-spell-library.scroll.spell.example": "Example Scroll",
@@ -14,7 +17,6 @@
   "item.the-spell-library.scroll.spell.gust": "Gust",
   "item.the-spell-library.scroll.spell.dark_aura": "Dark Aura",
   "item.the-spell-library.scroll.spell.expanded_strength": "Expanded Strength",
-  "item.the-spell-library.scroll.spell.punishment": "Punishment",
   "item.the-spell-library.scroll.spell.levitation": "Levitation",
 
   "spell.the-spell-library.tooltip.mana": "Mana: %s",
