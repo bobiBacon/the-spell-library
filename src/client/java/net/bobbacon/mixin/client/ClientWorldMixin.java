@@ -2,7 +2,9 @@ package net.bobbacon.mixin.client;
 
 import net.bobbacon.Accessors.WorldAccessor;
 import net.bobbacon.TheSpellLibrary;
+import net.bobbacon.TheSpellLibraryClient;
 import net.bobbacon.accessor.ClientWorldAccessor;
+import net.bobbacon.animations.AnimationManager;
 import net.bobbacon.render.spell.SpellRendererManager;
 import net.bobbacon.ritual.RitualManager;
 import net.minecraft.client.world.ClientWorld;
@@ -21,6 +23,7 @@ public class ClientWorldMixin implements ClientWorldAccessor {
     private void onWorldTick(CallbackInfo ci) {
         ClientWorld world = (ClientWorld) (Object) this;
         ((WorldAccessor)world).getSpellTickingManager().tickAll();
+        TheSpellLibraryClient.animationManagers.values().forEach(AnimationManager::tick);
     }
 
 

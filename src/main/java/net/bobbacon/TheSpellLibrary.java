@@ -14,18 +14,25 @@ import net.bobbacon.spell.SpellSchools;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.condition.RandomChanceWithLootingLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TheSpellLibrary implements ModInitializer {
 	public static final String MOD_ID = "the-spell-library";
@@ -34,6 +41,76 @@ public class TheSpellLibrary implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Identifier PLAY_ANIMATION_PACKET =
+			new Identifier(MOD_ID, "play_animation");
+	public static final Identifier STOP_ANIMATION_PACKET =
+			new Identifier(MOD_ID, "stop_animation");
+	public static final Identifier PLAY_COMPLEX_ANIMATION_PACKET =
+			new Identifier(MOD_ID, "play_complex_animation");
+	public static final Identifier STOP_COMPLEX_ANIMATION_PACKET =
+			new Identifier(MOD_ID, "stop_complex_animation");
+	public static void playAnimation(PlayerEntity player, Identifier animationId){
+		if (player.getWorld().isClient()){
+			//TODO simply play the animation if client
+			return;
+		}
+		PacketByteBuf buf = PacketByteBufs.create();
+
+		buf.writeUuid(player.getUuid());
+		buf.writeIdentifier(animationId);
+
+		sendPacketToNearbyPlayers(player, buf, PLAY_ANIMATION_PACKET);
+	}
+	public static void stopAnimation(PlayerEntity player, Identifier animationId){
+		if (player.getWorld().isClient()){
+			//TODO simply play the animation if client
+			return;
+		}
+		PacketByteBuf buf = PacketByteBufs.create();
+
+		buf.writeUuid(player.getUuid());
+		buf.writeIdentifier(animationId);
+
+		sendPacketToNearbyPlayers(player, buf, STOP_ANIMATION_PACKET);
+	}
+	public static void playComplexAnimation(PlayerEntity player, Identifier complexAnimationId, UUID slot, List<Identifier> animationIds){
+		if (player.getWorld().isClient()){
+			//TODO simply play the animation if client
+			return;
+		}
+		PacketByteBuf buf = PacketByteBufs.create();
+
+		buf.writeUuid(player.getUuid());
+		buf.writeIdentifier(complexAnimationId);
+		buf.writeUuid(slot);
+		StringBuilder ids= new StringBuilder();
+		animationIds.forEach(identifier -> ids.append(identifier.toString()).append(","));
+		ids.deleteCharAt(ids.length()-1);
+		buf.writeString(ids.toString());
+
+		sendPacketToNearbyPlayers(player,buf,PLAY_COMPLEX_ANIMATION_PACKET);
+	}
+	public static void stopComplexAnimation(PlayerEntity player, UUID slot){
+		if (player.getWorld().isClient()){
+			//TODO simply play the animation if client
+			return;
+		}
+		PacketByteBuf buf = PacketByteBufs.create();
+
+		buf.writeUuid(player.getUuid());
+		buf.writeUuid(slot);
+
+		sendPacketToNearbyPlayers(player, buf, STOP_COMPLEX_ANIMATION_PACKET);
+	}
+
+	private static void sendPacketToNearbyPlayers(PlayerEntity player, PacketByteBuf buf, Identifier packetId) {
+		List<ServerPlayerEntity> tracking = new ArrayList<>(PlayerLookup.tracking(player));
+		tracking.removeIf(serverPlayerEntity -> serverPlayerEntity==player);
+		for (ServerPlayerEntity other : tracking) {
+			ServerPlayNetworking.send(other, packetId, buf);
+		}
+		ServerPlayNetworking.send((ServerPlayerEntity) player, packetId, buf);
+	}
 
 	@Override
 	public void onInitialize() {
@@ -53,6 +130,7 @@ public class TheSpellLibrary implements ModInitializer {
 		ModLoot.init();
 		Predicates.init();
 		ModParticles.init();
+
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
 

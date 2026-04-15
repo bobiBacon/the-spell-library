@@ -1,6 +1,9 @@
 package net.bobbacon.item;
 
+import dev.kosmx.playerAnim.api.layered.AnimationStack;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import net.bobbacon.Accessors.PlayerAccessor;
+import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.spell.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +16,7 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ScrollItem extends Item {
@@ -36,6 +40,11 @@ public class ScrollItem extends Item {
             ((PlayerAccessor)user).setCurrentlyCastingSpell(spell);
             user.setCurrentHand(hand);
             spell.playCastingSound(user.getBlockPos());
+            Identifier animationId = new Identifier(TheSpellLibrary.MOD_ID, "in_walk");
+//            if (spellType==SpellDefs.Levitation){
+//                animationId = new Identifier(TheSpellLibrary.MOD_ID, "levitation_cast");
+//            }
+            TheSpellLibrary.playComplexAnimation(user,animationId,Spell.COMPLEX_ANIMATION_SLOT, List.of(new Identifier(TheSpellLibrary.MOD_ID, "spell_casting_upper"),new Identifier(TheSpellLibrary.MOD_ID, "spell_casting_lower")));
             return TypedActionResult.consume(stack);
         }
         return TypedActionResult.fail(stack);

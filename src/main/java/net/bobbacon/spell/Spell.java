@@ -4,6 +4,7 @@ package net.bobbacon.spell;
 import net.bobbacon.Accessors.LivingEntityAccessor;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.Accessors.WorldAccessor;
+import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.components.ManaComponent;
 import net.bobbacon.components.ModComponents;
 import net.minecraft.entity.LivingEntity;
@@ -12,6 +13,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -19,6 +21,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class Spell {
     public final SpellDef<? extends Spell> type;
@@ -27,6 +30,7 @@ public class Spell {
     public int age=0;
     public Vec3d pos;
     public Vec3d orientation;
+    public final static UUID COMPLEX_ANIMATION_SLOT= UUID.fromString("0596b76c-356c-41e0-9f81-374c0f4bd0d3");
 
     protected Spell(SpellDef<? extends Spell> type, World world, LivingEntity user, Spell template) {
         this.type = type;
@@ -150,6 +154,11 @@ public class Spell {
     public void stopCasting(){
         if (user instanceof PlayerEntity player){
             ((PlayerAccessor)player).setCurrentlyCastingSpell(null);
+            Identifier animationId = new Identifier(TheSpellLibrary.MOD_ID, "spell_casting_test");
+            if (type==SpellDefs.Levitation){
+                animationId = new Identifier(TheSpellLibrary.MOD_ID, "levitation_cast");
+            }
+            TheSpellLibrary.stopComplexAnimation(player,COMPLEX_ANIMATION_SLOT);
         }
     }
 
