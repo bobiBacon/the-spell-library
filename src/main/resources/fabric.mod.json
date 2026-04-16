@@ -4,7 +4,11 @@
 	"version": "${version}",
 	"custom": {
 		"cardinal-components": [
-			"the-spell-library:schools_mana"
+			"the-spell-library:schools_mana",
+			"the-spell-library:mana_regen",
+			"the-spell-library:cooldown_speed",
+			"the-spell-library:spell_power",
+			"the-spell-library:cast_speed"
 		]
 	},
 	"name": "The Spell Library",

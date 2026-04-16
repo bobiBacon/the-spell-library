@@ -27,6 +27,8 @@ public class SpellDefs {
             .setCooldown(80).customSymbolPath(new Identifier("minecraft","item/blaze_powder")).useTinted2dSymbol(new Identifier(TheSpellLibrary.MOD_ID,"item/spell/tintable_fire"),0xFF8000,0xFFFF66).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING).withRenderer());
     public static final SpellDef<?> Blindness= registryHelper.register("blindness",new SpellDef<>(new EffectTargetingSpell(20,ParticleTypes.SQUID_INK,new StatusEffectInstance(StatusEffects.BLINDNESS,300,0)),SpellSchools.Necromancy,40)
             .setCooldown(1200).useTinted2dSymbol(0x330080).setCastTime(50));
+    public static final SpellDef<?> DARK_ENERGY_WAVE= registryHelper.register("dark_energy_wave",new SpellDef<>(new InstantDamageSpell(20,6,DamageTypes.WITHER,ParticleTypes.SQUID_INK),SpellSchools.Necromancy,15)
+            .setCooldown(20).useTinted2dSymbol(0x330080));
     public static final SpellDef<?> BigFireBall= registryHelper.register("big_fire_ball",new SpellDef<>(new BigFireBallSpell(),SpellSchools.Fire,60)
             .customSymbolPath(new Identifier("minecraft","item/fire_charge")).useTinted2dSymbol(new Identifier(TheSpellLibrary.MOD_ID,"item/spell/tintable_fire"),0xcc3300,0xe6b800).setSound(ModSounds.FIREBALL_CASTING,ModSounds.FIREBALL_RELEASING).setCastTime(40).setRarity(Rarity.RARE));
     public static final SpellDef<?> Sheeeeep= registryHelper.register("sheeeeep",new SpellDef<>(new ProjectileShootingSpell(EntityType.SHEEP),SpellSchools.Conjuration,10).setCooldown(20).useTinted2dSymbol(0xFFEEEE).setRarity(Rarity.UNCOMMON));

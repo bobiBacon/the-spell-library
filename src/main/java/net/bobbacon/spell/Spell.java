@@ -7,6 +7,7 @@ import net.bobbacon.Accessors.WorldAccessor;
 import net.bobbacon.TheSpellLibrary;
 import net.bobbacon.components.ManaComponent;
 import net.bobbacon.components.ModComponents;
+import net.bobbacon.components.SpellsStatApi;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -164,5 +165,11 @@ public class Spell {
 
     public int getConcentrationTime() {
         return type.getConcentrationTime();
+    }
+    public float getSpellPower(){
+        if (user instanceof PlayerEntity player){
+            return SpellsStatApi.getStat(SpellsStatApi.getSpellPowerComponent(player),getSchool());
+        }
+        else return 1;
     }
 }

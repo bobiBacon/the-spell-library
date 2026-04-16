@@ -37,7 +37,7 @@ public class InstantDamageSpell extends TargetingSpell{
 
     @Override
     protected void apply(LivingEntity entity) {
-        entity.damage(user.getDamageSources().create(damageType,user),damage);
+        entity.damage(user.getDamageSources().create(damageType,user),damage*getSpellPower());
         if (!world.isClient){
             ((ServerWorld)world).spawnParticles(particleType,entity.getX(),entity.getEyeY(),entity.getZ(),15,0,0,0,0.1);
         }
