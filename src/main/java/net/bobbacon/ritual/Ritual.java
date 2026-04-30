@@ -1,6 +1,8 @@
 package net.bobbacon.ritual;
 
 import net.bobbacon.Accessors.EntityAccessor;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -85,14 +87,21 @@ public abstract class Ritual {
         if (world.isClient){
             return false;
         }
-        started = hasRitualSite();
+        started = canStart();
         if (started){
             definePlayers();
             RitualManager ritualManager = RitualManager.get((ServerWorld) world);
             ritualManager.add(this);
+            start();
             nextPhase();
         }
         return started;
+    }
+    public void start(){
+
+    }
+    public boolean canStart(){
+        return hasRitualSite();
     }
     protected void definePlayers(){
         List<PlayerEntity> list= world.getEntitiesByType(EntityType.PLAYER,new Box(center.west(15).south(15).down(4), center.east(15).north(15).up(6)), entity -> !entity.isSpectator());
@@ -245,5 +254,18 @@ public abstract class Ritual {
         ((EntityAccessor)entity).the_spell_library$setComesFromRitual(true,id);
         entity.setPersistent();
         spawnEntity(entity);
+    }
+    public static boolean checkGround(BlockPos groundCenter, int size, Block block,World world){
+        int max= (int) Math.ceil(size/2f);
+        int min= (int) Math.ceil(-size/2f);
+        for (int i = -min; i <max ; i++) {
+            for (int j = -min; j < max; j++) {
+                BlockPos pos= groundCenter.east(i).north(j);
+                if (!world.getBlockState(pos).isOf(block)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

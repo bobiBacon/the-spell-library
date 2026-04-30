@@ -8,14 +8,23 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.entity.damage.DamageType;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
+
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
@@ -23,8 +32,27 @@ public class TheSpellLibraryDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(ModModelGenerator::new);
+		pack.addProvider(ModTagGenerator::new);
 		pack.addProvider(ModRecipeGenerator::new);
 		pack.addProvider(ModLootGenerator::new);
+	}
+	public static class ModTagGenerator extends FabricTagProvider<DamageType> {
+		public static final TagKey<DamageType> Magic = TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(TheSpellLibrary.MOD_ID, "magic"));
+
+		public ModTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+			super(output, RegistryKeys.DAMAGE_TYPE, registriesFuture);
+		}
+
+		@Override
+		protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
+			getOrCreateTagBuilder(Magic)
+					.add(DamageTypes.MAGIC)
+					.add(DamageTypes.INDIRECT_MAGIC)
+					.add(DamageTypes.DRAGON_BREATH)
+					.add(DamageTypes.WITHER)
+					.add(DamageTypes.LIGHTNING_BOLT);
+		}
+
 	}
 	public static class ModModelGenerator extends FabricModelProvider {
 		public ModModelGenerator(FabricDataOutput output) {

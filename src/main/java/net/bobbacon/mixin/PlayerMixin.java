@@ -3,8 +3,10 @@ package net.bobbacon.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.bobbacon.Accessors.PlayerAccessor;
 import net.bobbacon.attributes.ModEntityAttributes;
+import net.bobbacon.components.SpellsStatApi;
 import net.bobbacon.spell.Mana;
 import net.bobbacon.spell.Spell;
+import net.bobbacon.spell.SpellSchool;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -47,6 +49,12 @@ public abstract class PlayerMixin implements PlayerAccessor {
     public float the_spell_library$getManaRegenRate() {
         PlayerEntity self= ((PlayerEntity) (Object) this);
         return (float)self.getAttributeValue(ModEntityAttributes.GENERIC_MANA_REGEN);
+    }
+    @Override
+    public float the_spell_library$getManaRegenRate(SpellSchool school) {
+        PlayerEntity self= ((PlayerEntity) (Object) this);
+        return (SpellsStatApi.getStat(SpellsStatApi.getManaRegenComponent(self),school))+SpellsStatApi.getStat(SpellsStatApi.getManaRegenComponent(self),school)-0.05f;
+
     }
 
 
@@ -105,7 +113,7 @@ public abstract class PlayerMixin implements PlayerAccessor {
                     if (mana.getManaPoints()>=mana.getMax()){
                         continue;
                     }
-                    mana.addMana(this.the_spell_library$getManaRegenRate()*i*i);
+                    mana.addMana(this.the_spell_library$getManaRegenRate(entry.getKey())*i*i);
                     return;
                 }
             }

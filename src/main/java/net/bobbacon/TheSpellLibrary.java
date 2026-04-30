@@ -3,6 +3,7 @@ package net.bobbacon;
 import net.bobbacon.attributes.ModEntityAttributes;
 import net.bobbacon.block.ModBlocks;
 import net.bobbacon.block.entity.ModBEs;
+import net.bobbacon.enchants.ModEnchants;
 import net.bobbacon.item.ModItems;
 import net.bobbacon.loot.*;
 import net.bobbacon.particles.ModParticles;
@@ -130,6 +131,7 @@ public class TheSpellLibrary implements ModInitializer {
 		ModLoot.init();
 		Predicates.init();
 		ModParticles.init();
+		ModEnchants.init();
 
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (id.equals(new Identifier("minecraft", "entities/witch"))) {
@@ -138,7 +140,7 @@ public class TheSpellLibrary implements ModInitializer {
 				try {
 					poolBuilder = LootPool.builder()
 							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceWithLootingLootCondition.builder(0.02f,0.01f))
+							.conditionally(RandomChanceWithLootingLootCondition.builder(0.02f,0.02f))
 							.with(ItemEntry.builder(net.bobbacon.item.ModItems.SCROLL))
 							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot, new ArrayList<>(List.of(new BySchoolModifier[]{new BySchoolModifier(2,SpellSchools.Arcanic)}))));
 				} catch (Exception e) {
@@ -154,7 +156,7 @@ public class TheSpellLibrary implements ModInitializer {
 				try {
 					poolBuilder = LootPool.builder()
 							.rolls(ConstantLootNumberProvider.create(1))
-							.conditionally(RandomChanceWithLootingLootCondition.builder(0.02f,0.01f))
+							.conditionally(RandomChanceWithLootingLootCondition.builder(0.02f,0.02f))
 							.with(ItemEntry.builder(net.bobbacon.item.ModItems.SCROLL))
 							.apply(RandomSpellLootFunction.builder(Predicates.AlwaysTrueLoot, new ArrayList<>()));
 				} catch (Exception e) {

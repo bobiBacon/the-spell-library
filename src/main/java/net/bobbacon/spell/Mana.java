@@ -1,16 +1,19 @@
 package net.bobbacon.spell;
 
 import net.bobbacon.Accessors.PlayerAccessor;
+import net.bobbacon.components.FloatWithModifiers;
 import net.bobbacon.components.ModComponents;
+import net.bobbacon.nbt.NbtSerializable;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Mana {
+public class Mana implements NbtSerializable {
     public float amount=0;
     public float overAmount=0;
-    public final HashMap<UUID,Float> maxModifiers=new HashMap<>();
+    public FloatWithModifiers maxAmount=new FloatWithModifiers(0);
     public final PlayerEntity player;
 
     public Mana(PlayerEntity player) {
@@ -29,12 +32,8 @@ public class Mana {
     }
 
     public float getMax() {
-        float max = 0;
 
-        for (float f : maxModifiers.values()) {
-            max +=f;
-        }
-        return max;
+        return maxAmount.getValue();
     }
 
     public void useMana(float amount) {
@@ -64,9 +63,9 @@ public class Mana {
         sync();
     }
 
-    public void addMaxModifier(UUID id,float modifier){
+    public void addMaxModifier(UUID id, float modifier, FloatWithModifiers.OperationType operationType){
         boolean b = amount >= getMax();
-        maxModifiers.put(id,modifier);
+        maxAmount.addModifier(id,modifier,operationType);
         if (b){
             amount=getMax();
         }
@@ -74,7 +73,7 @@ public class Mana {
     }
 
     public void removeMaxModifier(UUID id){
-        maxModifiers.remove(id);
+        maxAmount.removeModifier(id);
         if (amount>=getMax()){
             amount=getMax();
         }
@@ -110,5 +109,21 @@ public class Mana {
     public static float getMaxClassicMana(PlayerEntity player){
         PlayerAccessor playerAccessor= (PlayerAccessor) player;
         return playerAccessor.the_spell_library$getMaxMana();
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound tag) {
+        amount=tag.getFloat("amount");
+        overAmount=tag.getFloat("over_amount");
+        maxAmount.readFromNbt(tag.getCompound("max_amount"));
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound tag) {
+        tag.putFloat("amount",amount);
+        tag.putFloat("over_amount",overAmount);
+        NbtCompound nbtCompound= new NbtCompound();
+        maxAmount.writeToNbt(nbtCompound);
+        tag.put("max_amount",nbtCompound);
     }
 }

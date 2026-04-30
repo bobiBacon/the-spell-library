@@ -1,8 +1,11 @@
 package net.bobbacon.spell;
 
 import net.bobbacon.TheSpellLibrary;
+import net.bobbacon.components.SpellsStatApi;
 import net.bobbacon.sound.ModSounds;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -167,8 +170,9 @@ public class  SpellDef<T extends Spell> {
         return this.getId() == SpellDefs.EMPTY.getId();
     }
 
-    public int getCastTime() {
-        return castTime;
+    public int getCastTime(Entity user) {
+        float coefficient= user instanceof PlayerEntity player? SpellsStatApi.getStat(SpellsStatApi.getCastSpeedComponent(player),school)*SpellsStatApi.getStat(SpellsStatApi.getCastSpeedComponent(player)):1;
+        return (int) (castTime*coefficient);
     }
     public static  List<SpellDef<?>> getSpellsByRarity(Rarity rarity, List<SpellDef<?>> spellDefs) {
         return spellDefs.stream()

@@ -37,13 +37,7 @@ public class ManaComponent implements AutoSyncedComponent {
             NbtCompound schoolTag = manaTag.getCompound(key);
 
             Mana mana = new Mana(player);
-            mana.amount= schoolTag.getFloat("amount");
-            mana.overAmount= schoolTag.getFloat("overAmount");
-
-            NbtCompound modifiersTag = schoolTag.getCompound("modifiers");
-            for (String key2 : modifiersTag.getKeys()) {
-                mana.maxModifiers.put(UUID.fromString(key2),modifiersTag.getFloat(key2));
-            }
+            mana.readFromNbt(schoolTag);
 
             schoolsMana.put(school, mana);
         }
@@ -57,14 +51,9 @@ public class ManaComponent implements AutoSyncedComponent {
             NbtCompound schoolTag = new NbtCompound();
             Mana mana = entry.getValue();
 
-            schoolTag.putFloat("amount", mana.amount);
-            schoolTag.putFloat("overAmount", mana.overAmount);
+            mana.writeToNbt(schoolTag);
 
-            NbtCompound modifiersTag = new NbtCompound();
-            for (var entry2: mana.maxModifiers.entrySet()){
-                modifiersTag.putFloat(entry2.getKey().toString(),entry2.getValue());
-            }
-            schoolTag.put("modifiers",modifiersTag);
+
 
             manaTag.put(String.valueOf(SpellRegistry.SPELL_SCHOOL.getId(entry.getKey())), schoolTag);
         }

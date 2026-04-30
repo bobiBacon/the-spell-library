@@ -107,7 +107,8 @@ configurations.all {
 }
 
 processResources {
-	def isDatagen= !gradle.startParameter.taskNames.first().equals("assemble")
+	def tasks=gradle.startParameter.taskNames;
+	def isDatagen= tasks.isEmpty()?false: tasks.first() != "assemble"
 
 	def datagenEntrypoint = isDatagen ? """,
     "fabric-datagen": [

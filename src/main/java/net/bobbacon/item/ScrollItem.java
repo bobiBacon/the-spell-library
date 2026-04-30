@@ -30,6 +30,7 @@ public class ScrollItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack= user.getStackInHand(hand);
+//        stack.setHolder(user);
         Spell spell= ((PlayerAccessor)user).getCurrentlyCastingSpell();
         SpellDef<?> spellType = getSpell(stack);
         if (spell==null||spellType !=spell.type){
@@ -90,12 +91,14 @@ public class ScrollItem extends Item {
             onStoppedUsing(stack,world,user,remainingUseTicks);
             return;
         }
-        spell.castingTick(user.getBlockPos(),remainingUseTicks);
-        if (remainingUseTicks==spell.getConcentrationTime()&&spell.type.requiresConcentration){
+        int remainingCastingTicks= getCastingTime(stack,user)-(Integer.MAX_VALUE-remainingUseTicks);
+        spell.castingTick(user.getBlockPos(),remainingCastingTicks);
+        if (remainingCastingTicks==spell.getConcentrationTime()&&spell.type.requiresConcentration){
             castSpell(stack,world,user,spell);
         }
-        if (remainingUseTicks==0){
+        if (remainingCastingTicks==0){
             finishUsing(stack,world,user);
+            user.stopUsingItem();
         }
         if (((getMaxUseTime(stack)-remainingUseTicks)&11111)==0){
 //            Spell spell= getSpell(stack).newSpell(world,user);
@@ -170,8 +173,11 @@ public class ScrollItem extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
+        return Integer.MAX_VALUE;
+    }
+    public int getCastingTime(ItemStack stack,LivingEntity user){
         SpellDef<?> spell= getSpell(stack);
-        return spell.getCastTime()+spell.getConcentrationTime();
+        return spell.getCastTime(user)+spell.getConcentrationTime();
     }
 
     @Override

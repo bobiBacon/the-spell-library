@@ -144,7 +144,7 @@ public class Spell {
         Style style= getSchool().style;
         ArrayList<Text> list= new ArrayList<>();
         list.add(Text.translatable("spell.the-spell-library.tooltip.mana",this.type.manaCost).setStyle(style));
-        list.add(Text.translatable("spell.the-spell-library.tooltip.cast_time",this.type.castTime/20.0).setStyle(style));
+        list.add(Text.translatable("spell.the-spell-library.tooltip.cast_time",this.type.getCastTime(user)/20.0).setStyle(style));
         if (this.isSingleUse()){
             list.add(Text.translatable("spell.the-spell-library.tooltip.single_use").setStyle(style));
         }else {
@@ -166,10 +166,14 @@ public class Spell {
     public int getConcentrationTime() {
         return type.getConcentrationTime();
     }
+    public int getCastTime(LivingEntity user){
+        return type.getCastTime(user);
+    }
     public float getSpellPower(){
         if (user instanceof PlayerEntity player){
-            return SpellsStatApi.getStat(SpellsStatApi.getSpellPowerComponent(player),getSchool());
+            return SpellsStatApi.getStat(SpellsStatApi.getSpellPowerComponent(player),getSchool())*SpellsStatApi.getStat(SpellsStatApi.getSpellPowerComponent(player));
         }
         else return 1;
     }
+
 }
