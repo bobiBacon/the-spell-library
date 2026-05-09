@@ -7,6 +7,7 @@
     "LivingEntityMixin",
     "PlayerMixin",
     "ServerWorldMixin",
+    "StructureTemplateAccessor",
     "WorldMixin"
   ],
   "injectors": {

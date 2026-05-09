@@ -119,7 +119,7 @@ public class TheSpellLibrary implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info("Hello Fabric world in a updated version of this lib! v6");
 
 		SpellDefs.init();
 		ModItems.init();
